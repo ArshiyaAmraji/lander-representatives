@@ -239,8 +239,8 @@ body{
     }
 
     .list-box{
-        border-radius:0 0 28px 28px;
-        margin:0;                  /* همه margin حذف شد */
+        border-radius:28px;
+        margin:0 15px 0 15px;                  /* همه margin حذف شد */
         padding:24px 20px;
         box-shadow:0 12px 40px rgba(0,0,0,0.15);
     }
@@ -249,8 +249,8 @@ body{
     #map{
         height:55vh;
         min-height:480px;
-        margin:0 12px 12px 12px;   /* بالا صفر شد تا بچسبه */
-        border-radius:0 0 28px 28px;
+        margin:0 31px 12px 31px;   /* بالا صفر شد تا بچسبه */
+        border-radius:28px;
         order:2;
         box-shadow: 
             0 0 0 6px white,
