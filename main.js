@@ -1,34 +1,30 @@
 document.addEventListener('DOMContentLoaded', function () {
     const map = L.map('map', {
         center: [32.4279, 53.6880],
-        zoom: window.innerWidth <= 992 ? 5 : 6,   // روی موبایل زوم کمتر → کل ایران دیده میشه
-        // zoom: 6,
-        minZoom: 5.2,
+        zoom: window.innerWidth <= 992 ? 5 : 6,
+        minZoom: 5.2,   // پیش‌فرض دسکتاپ
         maxZoom: 18,
-        maxBounds: [[22, 42], [41, 66]],
+        maxBounds: [[20, 38], [44, 70]],
         maxBoundsViscosity: 0.75,
         zoomControl: false
     });
 
     if (window.innerWidth <= 992) {
-    setTimeout(() => {
-        map.fitBounds([
-            [23.5, 41.5],    // بالا چپ
-            [41.8, 66.5]     // پایین راست
-        ], {
-            padding: [30, 30],
-            animate: false
-        });
-    }, 100);
+    map.setMinZoom(4); // فقط روی گوشی minZoom کمتر می‌شود
 }
+
+
+
+
 
     function updateMapView() {
         if (window.innerWidth <= 992) {
-            map.fitBounds([[24.3, 43.3], [40.7, 64.2]], { padding: [20, 20] });
+            map.setView([32.4, 54], 4.8);  // کل ایران دیده می‌شود
         } else {
             map.fitBounds([[25, 44], [39.8, 63.4]], { padding: [50, 50] });
         }
     }
+
     updateMapView();
     window.addEventListener('resize', updateMapView);
 
