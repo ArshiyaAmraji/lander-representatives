@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نمایندگی‌های رسمی لندر در ایران</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- <div class="header">نمایندگی‌های رسمی لندر در ایران</div> -->
+
+    <div class="main-wrapper">
+        <div id="map"></div>
+
+        <div class="container">
+            <div class="list-box">
+                <h2>لیست نمایندگی‌ها</h2>
+
+                <select id="provinceSelect" class="province-select">
+                    <option value="">انتخاب استان</option>
+                    <option value="tehran">تهران</option>
+                    <option value="alborz">البرز (کرج)</option>
+                    <option value="khorasan">خراسان رضوی (مشهد)</option>
+                    <option value="esfahan">اصفهان</option>
+                    <option value="fars">فارس (شیراز)</option>
+                    <option value="azerbaijan">آذربایجان شرقی (تبریز)</option>
+                    <option value="gilan">گیلان (رشت)</option>
+                    <option value="qom">قم</option>
+                </select>
+
+                <input type="text" id="searchBox" placeholder="جستجو در شهر یا نمایندگی...">
+
+                <div id="agencyList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
