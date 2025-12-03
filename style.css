@@ -41,6 +41,7 @@ body{
         0 0 0 10px #e0e7ff,
         0 25px 70px rgba(0,0,0,0.25);
     background:white;
+    z-index:1;
 }
 
 /* ستون راست */
@@ -71,7 +72,6 @@ body{
     margin-bottom:20px;
 }
 
-/* اینجاست که اسکرول را روی آیتم‌ها فعال کردیم */
 #agencyList{
     flex:1;
     overflow-y:auto;
@@ -125,18 +125,6 @@ body{
     line-height:1.8;
 }
 
-.neshan-btn{
-    display:block;
-    margin:16px auto 0;
-    padding:12px 24px;
-    background:#10b981;
-    color:white;
-    text-decoration:none;
-    border-radius:12px;
-    font-weight:bold;
-    text-align:center;
-}
-
 .city-name{
     font-weight:900;
     font-size:15px;
@@ -147,6 +135,81 @@ body{
     box-shadow:0 4px 15px rgba(0,0,0,.3);
     border:2px solid #3b82f6;
     white-space:nowrap;
+}
+
+/* دکمه نشان داخل پاپ‌آپ */
+.neshan-btn{
+    display:block;
+    margin:18px auto 0;
+    padding:13px 32px;
+    background:#10b981;
+    color:white;
+    text-decoration:none;
+    border-radius:14px;
+    font-weight:bold;
+    font-size:15px;
+    transition:all .3s;
+}
+
+.neshan-btn:hover{
+    background:#0d9a6e;
+    transform:translateY(-2px);
+}
+
+/* ———————————————————— پاپ‌آپ کاملاً اصلاح‌شده ———————————————————— */
+.popup-content {
+    text-align:center;
+    padding:20px 22px;
+    direction:rtl;
+    min-width:280px;
+    max-width:340px;
+}
+
+.popup-content h4{
+    color:#1e40af;
+    margin:0 0 14px;
+    font-size:19px;
+    font-weight:900;
+}
+
+.popup-content p{
+    margin:10px 0;
+    color:#475569;
+    font-size:14.5px;
+    line-height:1.75;
+}
+
+.popup-content strong{
+    color:#1e40af;
+}
+
+.popup-content a[href^="tel"]{
+    color:#1e40af;
+    font-weight:600;
+    text-decoration:none;
+}
+
+/* استایل کلی پاپ‌آپ Leaflet */
+.leaflet-popup-content-wrapper{
+    background:white !important;
+    border-radius:18px !important;
+    box-shadow:0 15px 45px rgba(0,0,0,0.3) !important;
+    padding:8px !important;
+    overflow:visible !important;
+}
+
+.leaflet-popup-content{
+    margin:0 !important;
+    overflow:visible !important;
+}
+
+.leaflet-popup-tip{
+    box-shadow:0 10px 30px rgba(0,0,0,0.25) !important;
+}
+
+/* وقتی چند پاپ‌آپ بازه، روی هم نیفتن */
+.leaflet-popup-pane{
+    z-index:700 !important;
 }
 
 /* وسط‌چین کردن attribution */
@@ -196,32 +259,4 @@ body{
     }
 
     .list-box h2{font-size:26px}
-}
-/* این رو به انتهای style.css اضافه کن */
-.leaflet-popup-content-wrapper {
-    box-shadow: 0 10px 30px rgba(0,0,0,0.25) !important;
-    border-radius: 16px !important;
-    overflow: hidden;
-}
-
-.leaflet-popup-content {
-    margin: 0 !important;
-}
-
-.leaflet-popup-tip {
-    box-shadow: 0 10px 30px rgba(0,0,0,0.25) !important;
-}
-/* این رو به انتهای style.css اضافه کن */
-.leaflet-popup-content-wrapper {
-    box-shadow: 0 10px 30px rgba(0,0,0,0.25) !important;
-    border-radius: 16px !important;
-    overflow: hidden;
-}
-
-.leaflet-popup-content {
-    margin: 0 !important;
-}
-
-.leaflet-popup-tip {
-    box-shadow: 0 10px 30px rgba(0,0,0,0.25) !important;
 }
