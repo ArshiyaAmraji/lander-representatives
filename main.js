@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', function () {
         zoomControl: false
     });
 
-    // اجازه زوم اوت بیشتر فقط روی موبایل
     if (window.innerWidth <= 992) {
         map.setMinZoom(4);
     }
@@ -31,10 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
         zoomOutTitle: 'کوچک‌نمایی'
     }).addTo(map);
 
-    L.control.attribution({
-        position: 'bottomleft',
-        prefix: ''
-    }).addTo(map);
+    L.control.attribution({ position: 'bottomleft', prefix: '' }).addTo(map);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors',
@@ -51,25 +47,30 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     const agencies = [
-        {city:"تهران",name:"دفتر مرکزی لندر",lat:35.7618,lng:51.4043,addr:"سهروردی شمالی، خیابان خرمشهر، پلاک ۱",phone:"021-91002292"},
-        {city:"تهران",name:"لندر شاپ ستارخان",lat:35.7012,lng:51.3456,addr:"ستارخان، بین شادمان و بهبودی، پلاک ۲۴۴",phone:"021-66559575"},
-        {city:"تهران",name:"آلارم الکترونیک",lat:35.6965,lng:51.3990,addr:"جمهوری، پاساژ یگانه، پلاک ۲۳",phone:"021-66342702"},
-        {city:"کرج",name:"نمایندگی کرج",lat:35.8321,lng:50.9654,addr:"جهانشهر، بلوار جمهوری",phone:"026-32511223"},
-        {city:"مشهد",name:"نمایندگی مشهد",lat:36.2970,lng:59.6062,addr:"وکیل آباد، نبش وکیل آباد ۲۵",phone:"051-36081234"},
-        {city:"اصفهان",name:"نمایندگی اصفهان",lat:32.6539,lng:51.6660,addr:"چهارباغ بالا، نزدیک سی و سه پل",phone:"031-36654321"},
-        {city:"شیراز",name:"فول آپشن",lat:29.5918,lng:52.5833,addr:"چمران، نرسیده به پل چمران",phone:"071-36281900"},
-        {city:"تبریز",name:"نمایندگی تبریز",lat:38.0667,lng:46.2833,addr:"امام خمینی، نزدیک میدان ساعت",phone:"041-33345678"},
-        {city:"رشت",name:"نمایندگی رشت",lat:37.2808,lng:49.5832,addr:"میدان شهرداری، سبزه میدان",phone:"013-33398765"},
-        {city:"قم",name:"نمایندگی قم",lat:34.6399,lng:50.8759,addr:"بلوار امین، نزدیک حرم",phone:"025-37754321"}
+        {city:"تهران",name:"دیجی سام (سامان آذرخوش)",lat:35.68696559794489,lng:51.42165512396892,addr:"تهران، میدان امام خمینی، اول فردوسی، پشت شهرداری، پاساژ لباف، طبقه 1",phone:"۰۹۱۲۷۱۴۶۴۸۹ / ۰۲۱۳۶۴۸۳۵۲۹", type:"ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت"},
+        {city:"تهران",name:"فروشگاه موتوتیونینگ محسن (آقای شاملو)",lat:35.6892,lng:51.5431,addr:"تهران، اتوبان بسیج، ۲۰ متری افسریه، ۱۵ متری اول، نبش کوچه کنگاوری (۲۹)",phone:"۰۲۱۳۳۱۴۵۵۲۱ / ۰۲۱۳۸۳۳۳۰۹۹", type:"ردیاب جی‌پی‌اس موتورسیکلت"},
+        {city:"تهران",name:"فروشگاه رحمانی (آقای مهران رحمانی)",lat:35.7012,lng:51.3456,addr:"تهران، خیابان عباسی، نبش دومین کوچه سمت چپ، پلاک ۲۹۴",phone:"۰۹۱۲۸۴۰۴۵۳۷ / ۰۲۱۵۵۴۱۸۹۸۲", type:"ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت"},
+        {city:"تهران",name:"فروشگاه جام جم (آقای فرید نظری)",lat:35.741102313508165,lng:51.549681004715055,addr:"تهرانپارس، خیابان ۱۹۶ شرقی، پلاک ۲۲۹",phone:"۰۹۱۲۸۳۰۰۳۱۰ / ۰۲۱۷۷۸۶۷۵۱", type:"ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت"},
+        {city:"تهران",name:"لندرشاپ (آقای رسولی)",lat:35.71284720177635,lng:51.36928971854059,addr:"تهران، ستارخان، بین شادمان و بهبودی، بعد از کوچه علی نجاری، پلاک ۲۴۴، طبقه اول",phone:"۰۹۱۲۲۱۵۱۳۳۰ / ۰۲۱۶۶۵۵۹۵۷۵", type:"ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت"},
+        {city:"کرج",name:"نمایندگی کرج",lat:35.8321,lng:50.9654,addr:"جهانشهر، بلوار جمهوری",phone:"026-32511223", type:"فروش و نصب"},
+        {city:"مشهد",name:"نمایندگی مشهد",lat:36.2970,lng:59.6062,addr:"وکیل آباد، نبش وکیل آباد ۲۵",phone:"051-36081234", type:"فروش و خدمات پس از فروش"},
+        {city:"اصفهان",name:"نمایندگی اصفهان",lat:32.6539,lng:51.6660,addr:"چهارباغ بالا، نزدیک سی و سه پل",phone:"031-36654321", type:"فروش و نصب تخصصی"},
+        {city:"شیراز",name:"فول آپشن",lat:29.5918,lng:52.5833,addr:"چمران، نرسیده به پل چمران",phone:"071-36281900", type:"فروش و نصب + تیونینگ"},
+        {city:"تبریز",name:"نمایندگی تبریز",lat:38.0667,lng:46.2833,addr:"امام خمینی، نزدیک میدان ساعت",phone:"041-33345678", type:"فروش و خدمات"},
+        {city:"رشت",name:"نمایندگی رشت",lat:37.2808,lng:49.5832,addr:"میدان شهرداری، سبزه میدان",phone:"013-33398765", type:"فروش و نصب"},
+        {city:"قم",name:"نمایندگی قم",lat:34.6399,lng:50.8759,addr:"بلوار امین، نزدیک حرم",phone:"025-37754321", type:"فروش و خدمات پس از فروش"}
     ];
 
     const listContainer = document.getElementById('agencyList');
     let currentProvince = '';
+    let currentService = '';
+
+    function getTypeColor(type) {
+        return '#2563eb';
+    }
 
     agencies.forEach(a => {
         const title = a.city + (a.name ? ' — ' + a.name : '');
-
-        // فقط گوگل مپ
         const gmapUrl = `https://www.google.com/maps/search/?api=1&query=${a.lat},${a.lng}`;
 
         L.marker([a.lat, a.lng], {icon: bluePin}).addTo(map)
@@ -78,7 +79,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     <h4>${title}</h4>
                     <p><strong>آدرس:</strong> ${a.addr}</p>
                     <p><strong>تلفن:</strong> <a href="tel:${a.phone}">${a.phone}</a></p>
-
+                    <p><strong>نوع فعالیت:</strong> 
+                        <span class="activity-tag" style="background:${getTypeColor(a.type)}">${a.type}</span>
+                    </p>
                     <a href="${gmapUrl}" target="_blank" class="neshan-btn" style="background:#10b981">
                         مسیریابی با گوگل مپ
                     </a>
@@ -90,65 +93,70 @@ document.addEventListener('DOMContentLoaded', function () {
                 autoPanPaddingTopLeft: L.point(60, 140),
                 autoPanPaddingBottomRight: L.point(60, 100),
                 keepInView: true
-            })
-            .on('popupopen', function(e) {
-                const px = map.project(e.popup._latlng);
-                const padding = map.getSize().y * 0.25;
-                if (px.y < padding) {
-                    map.panTo(e.popup._latlng, { animate: true });
-                }
             });
 
         const item = document.createElement('div');
         item.className = 'agency-item';
-        item.innerHTML = `<strong>${title}</strong><small>${a.addr}<br><a href="tel:${a.phone}" style="color:#1e40af;font-weight:600">${a.phone}</a></small>`;
+        item.innerHTML = `
+            <strong>${title}</strong>
+
+            <div class="activity-badge" style="background:${getTypeColor(a.type)}">
+                ${a.type}
+            </div>
+
+            <small class="agency-address">
+                ${a.addr}<br>
+                <a href="tel:${a.phone}" style="color:#1e40af;font-weight:600">${a.phone}</a>
+            </small>
+        `;
 
         item.onclick = () => {
             map.setView([a.lat, a.lng], 16, { animate: true });
-
             if (window.innerWidth <= 992) {
-                setTimeout(() => {
-                    document.getElementById('map').scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'center'
-                    });
-                }, 750);
+                setTimeout(() => document.getElementById('map').scrollIntoView({behavior: 'smooth', block: 'center'}), 750);
             }
         };
 
         listContainer.appendChild(item);
     });
 
+    /** -----------------------------------
+     *  فیلتر بر اساس جستجو + استان + خدمات
+     *  -----------------------------------
+     */
     function filterList() {
         const term = document.getElementById('searchBox').value.trim().toLowerCase();
+
         document.querySelectorAll('.agency-item').forEach(el => {
             const text = el.textContent.toLowerCase();
+
             const matchesSearch = text.includes(term);
-            const matchesProvince = !currentProvince || (
-                (currentProvince==='tehran' && text.includes('تهران')) ||
-                (currentProvince==='alborz' && text.includes('کرج')) ||
-                (currentProvince==='khorasan' && text.includes('مشهد')) ||
-                (currentProvince==='esfahan' && text.includes('اصفهان')) ||
-                (currentProvince==='fars' && text.includes('شیراز')) ||
-                (currentProvince==='azerbaijan' && text.includes('تبریز')) ||
-                (currentProvince==='gilan' && text.includes('رشت')) ||
-                (currentProvince==='qom' && text.includes('قم'))
-            );
-            el.style.display = matchesSearch && matchesProvince ? 'block' : 'none';
+            const matchesProvince = !currentProvince || text.includes(currentProvince);
+            const matchesService = !currentService || text.includes(currentService.toLowerCase());
+
+            el.style.display =
+                (matchesSearch && matchesProvince && matchesService)
+                ? 'block'
+                : 'none';
         });
     }
 
+    /** -------------------------------
+     *  فیلتر براساس متن (Search)
+     *  -------------------------------
+     */
     document.getElementById('searchBox').addEventListener('input', filterList);
 
+    /** -------------------------------
+     *  فیلتر استان
+     *  -------------------------------
+     */
     document.getElementById('provinceSelect').addEventListener('change', function(){
         currentProvince = this.value;
         document.getElementById('searchBox').value = '';
         filterList();
 
-        if(!this.value){
-            updateMapView();
-            return;
-        }
+        if(!this.value){ updateMapView(); return; }
 
         const config = {
             tehran:{center:[35.7210,51.3890],zoom:11},
@@ -162,7 +170,26 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         const c = config[this.value];
-        map.setView(c.center, c.zoom, {animate:true});
-        setTimeout(() => document.querySelector('.list-box').scrollIntoView({behavior:'smooth'}), 400);
+        if (c) {
+            map.setView(c.center, c.zoom, {animate:true});
+            setTimeout(() => document.querySelector('.list-box').scrollIntoView({behavior:'smooth'}), 400);
+        }
     });
+
+    /** -------------------------------
+     *  فیلتر خدمات (نوع فعالیت)
+     *  -------------------------------
+     */
+    const serviceFilter = document.getElementById("serviceFilter");
+    const filterBtn = document.getElementById("filterBtn");
+
+    filterBtn.onclick = () => {
+        serviceFilter.style.display =
+            serviceFilter.style.display === "none" ? "block" : "none";
+    };
+
+    serviceFilter.onchange = () => {
+        currentService = serviceFilter.value.trim();
+        filterList();
+    };
 });
