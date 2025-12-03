@@ -2,24 +2,21 @@ document.addEventListener('DOMContentLoaded', function () {
     const map = L.map('map', {
         center: [32.4279, 53.6880],
         zoom: window.innerWidth <= 992 ? 5 : 6,
-        minZoom: 5.2,   // پیش‌فرض دسکتاپ
+        minZoom: 5.2,
         maxZoom: 18,
         maxBounds: [[20, 38], [44, 70]],
         maxBoundsViscosity: 0.75,
         zoomControl: false
     });
 
+    // اجازه زوم اوت بیشتر فقط روی موبایل
     if (window.innerWidth <= 992) {
-    map.setMinZoom(4); // فقط روی گوشی minZoom کمتر می‌شود
-}
-
-
-
-
+        map.setMinZoom(4);
+    }
 
     function updateMapView() {
         if (window.innerWidth <= 992) {
-            map.setView([32.4, 54], 4.8);  // کل ایران دیده می‌شود
+            map.setView([32.4, 54], 4.8);
         } else {
             map.fitBounds([[25, 44], [39.8, 63.4]], { padding: [50, 50] });
         }
@@ -71,42 +68,44 @@ document.addEventListener('DOMContentLoaded', function () {
 
     agencies.forEach(a => {
         const title = a.city + (a.name ? ' — ' + a.name : '');
-        const neshanUrl = `https://neshan.org/maps/places/@${a.lat},${a.lng},16z`;
 
-    L.marker([a.lat, a.lng], {icon: bluePin}).addTo(map)
-        .bindPopup(`<div class="popup-content">
-            <h4>${title}</h4>
-            <p><strong>آدرس:</strong> ${a.addr}</p>
-            <p><strong>تلفن:</strong> <a href="tel:${a.phone}">${a.phone}</a></p>
-            <a href="${neshanUrl}" target="_blank" class="neshan-btn">مسیریابی با نشان</a>
-        </div>`, {
-            maxWidth: 340,
-            minWidth: 280,
-            // این ۴ خط جادویی همه چیز رو حل می‌کنه!
-            autoPan: true,
-            autoPanPaddingTopLeft: L.point(60, 140),    // فاصله از بالا و چپ (مهم!)
-            autoPanPaddingBottomRight: L.point(60, 100), // فاصله از پایین و راست
-            keepInView: true,          // پاپ‌آپ حتماً کاملاً در دید باشه
-            // autoClose: false,          // چند پاپ‌آپ همزمان باز بمونه (بهتره برای کلاستر نزدیک)
-            // closeOnClick: false        // با کلیک روی نقشه بسته نشه (اختیاری، ولی خوبه)
-        })
-        // این خط خیلی مهمه: وقتی پاپ‌آپ باز میشه، مطمئن شو کاملاً دیده بشه
-        .on('popupopen', function(e) {
-            const px = map.project(e.popup._latlng);
-            const padding = map.getSize().y * 0.25; // ۲۵٪ از ارتفاع صفحه فاصله امن
-            if (px.y < padding) {
-                map.panTo(e.popup._latlng, { animate: true });
-            }
-        });
+        // فقط گوگل مپ
+        const gmapUrl = `https://www.google.com/maps/search/?api=1&query=${a.lat},${a.lng}`;
 
-const item = document.createElement('div');
+        L.marker([a.lat, a.lng], {icon: bluePin}).addTo(map)
+            .bindPopup(`
+                <div class="popup-content">
+                    <h4>${title}</h4>
+                    <p><strong>آدرس:</strong> ${a.addr}</p>
+                    <p><strong>تلفن:</strong> <a href="tel:${a.phone}">${a.phone}</a></p>
+
+                    <a href="${gmapUrl}" target="_blank" class="neshan-btn" style="background:#10b981">
+                        مسیریابی با گوگل مپ
+                    </a>
+                </div>
+            `, {
+                maxWidth: 340,
+                minWidth: 280,
+                autoPan: true,
+                autoPanPaddingTopLeft: L.point(60, 140),
+                autoPanPaddingBottomRight: L.point(60, 100),
+                keepInView: true
+            })
+            .on('popupopen', function(e) {
+                const px = map.project(e.popup._latlng);
+                const padding = map.getSize().y * 0.25;
+                if (px.y < padding) {
+                    map.panTo(e.popup._latlng, { animate: true });
+                }
+            });
+
+        const item = document.createElement('div');
         item.className = 'agency-item';
         item.innerHTML = `<strong>${title}</strong><small>${a.addr}<br><a href="tel:${a.phone}" style="color:#1e40af;font-weight:600">${a.phone}</a></small>`;
-        
+
         item.onclick = () => {
             map.setView([a.lat, a.lng], 16, { animate: true });
 
-            // اسکرول خودکار به نقشه روی موبایل
             if (window.innerWidth <= 992) {
                 setTimeout(() => {
                     document.getElementById('map').scrollIntoView({
@@ -116,16 +115,9 @@ const item = document.createElement('div');
                 }, 750);
             }
         };
-        
+
         listContainer.appendChild(item);
     });
-
-    // const cityCenters = {"تهران":[35.73,51.40],"کرج":[35.825,50.95],"مشهد":[36.297,59.606],"اصفهان":[32.654,51.666],"شیراز":[29.592,52.583],"تبریز":[38.067,46.283],"رشت":[37.281,49.583],"قم":[34.640,50.876]};
-    // Object.entries(cityCenters).forEach(([city,coord]) => {
-    //     if(agencies.some(a=>a.city===city)){
-    //         L.marker(coord,{icon:L.divIcon({className:'city-name',html:city,iconSize:[null,null]})}).addTo(map);
-    //     }
-    // });
 
     function filterList() {
         const term = document.getElementById('searchBox').value.trim().toLowerCase();
