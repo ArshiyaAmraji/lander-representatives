@@ -90,19 +90,33 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        const item = document.createElement('div');
+const item = document.createElement('div');
         item.className = 'agency-item';
         item.innerHTML = `<strong>${title}</strong><small>${a.addr}<br><a href="tel:${a.phone}" style="color:#1e40af;font-weight:600">${a.phone}</a></small>`;
-        item.onclick = () => map.setView([a.lat, a.lng], 16, {animate: true});
+        
+        item.onclick = () => {
+            map.setView([a.lat, a.lng], 16, { animate: true });
+
+            // اسکرول خودکار به نقشه روی موبایل
+            if (window.innerWidth <= 992) {
+                setTimeout(() => {
+                    document.getElementById('map').scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                }, 750);
+            }
+        };
+        
         listContainer.appendChild(item);
     });
 
-    const cityCenters = {"تهران":[35.73,51.40],"کرج":[35.825,50.95],"مشهد":[36.297,59.606],"اصفهان":[32.654,51.666],"شیراز":[29.592,52.583],"تبریز":[38.067,46.283],"رشت":[37.281,49.583],"قم":[34.640,50.876]};
-    Object.entries(cityCenters).forEach(([city,coord]) => {
-        if(agencies.some(a=>a.city===city)){
-            L.marker(coord,{icon:L.divIcon({className:'city-name',html:city,iconSize:[null,null]})}).addTo(map);
-        }
-    });
+    // const cityCenters = {"تهران":[35.73,51.40],"کرج":[35.825,50.95],"مشهد":[36.297,59.606],"اصفهان":[32.654,51.666],"شیراز":[29.592,52.583],"تبریز":[38.067,46.283],"رشت":[37.281,49.583],"قم":[34.640,50.876]};
+    // Object.entries(cityCenters).forEach(([city,coord]) => {
+    //     if(agencies.some(a=>a.city===city)){
+    //         L.marker(coord,{icon:L.divIcon({className:'city-name',html:city,iconSize:[null,null]})}).addTo(map);
+    //     }
+    // });
 
     function filterList() {
         const term = document.getElementById('searchBox').value.trim().toLowerCase();
