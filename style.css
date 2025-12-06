@@ -140,9 +140,9 @@ body{
 .neshan-btn{
     display:block;
     margin:18px auto 0;
-    padding:13px 32px;
+    padding:10px 30px;
     background:#10b981;
-    color:white;
+    color:white !important;
     text-decoration:none;
     border-radius:14px;
     font-weight:bold;
@@ -162,8 +162,8 @@ body{
     direction:rtl;
     min-width:280px;
     max-width:340px;
-        font-family:'Vazirmatn',sans-serif;
-
+    font-family:'Vazirmatn',sans-serif;
+    
 }
 
 .popup-content h4{
@@ -234,22 +234,22 @@ body{
     .container{
         order:1;
         max-width:none;
-        padding:16px 12px 0 12px;  /* فاصله پایین رو صفر کردیم */
+        padding:16px 12px 0 12px;  
         height:auto;
     }
 
     .list-box{
         border-radius:28px;
-        margin:0 15px 0 15px;                  /* همه margin حذف شد */
+        margin:0 15px 0 15px;                  
         padding:24px 20px;
         box-shadow:0 12px 40px rgba(0,0,0,0.15);
     }
 
-    /* نقشه - کاملاً چسبیده به پایین لیست */
+
     #map{
         height:55vh;
         min-height:480px;
-        margin:0 31px 12px 31px;   /* بالا صفر شد تا بچسبه */
+        margin:0 31px 12px 31px;   
         border-radius:28px;
         order:2;
         box-shadow: 
@@ -266,13 +266,12 @@ body{
     .list-box h2{font-size:26px}
 }
 
-/* راهنمای ثابت در بالا-راست نقشه */
 .map-hint {
     position: absolute;
-    top: 16px;           /* فاصله از بالا */
-    right: 16px;         /* فاصله از راست */
+    top: 16px;           
+    right: 16px;         
     left: auto !important;
-    transform: none !important;  /* حذف translate که مشکل ایجاد می‌کرد */
+    transform: none !important;  
     
     background: rgba(30, 64, 175, 0.95);
     color: white;
@@ -387,3 +386,198 @@ body{
     font-family: 'Vazirmatn';
 }
 
+/* کادر مودال فیلتر خدمات */
+.service-modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.3s ease;
+}
+
+/* حالت فعال */
+.service-modal.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* جعبه داخلی */
+.service-box {
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(20px);
+    width: 85%;
+    max-width: 380px;
+    padding: 24px;
+    border-radius: 24px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+    animation: popUp 0.35s ease;
+    text-align: right;
+    font-family: 'Vazirmatn';
+}
+
+/* انیمیشن باز شدن */
+@keyframes popUp {
+    from { transform: translateY(25px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* دکمه بستن */
+.close-service {
+    width: 36px;
+    height: 36px;
+    background: #ef4444;
+    color: white;
+    border-radius: 10px;
+    border: none;
+    float: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .2s;
+}
+
+.close-service:hover {
+    background: #dc2626;
+}
+
+.service-box h3 {
+    font-size: 20px;
+    margin-bottom: 16px;
+    color: #1e3a8a;
+    font-weight: 900;
+}
+
+.service-select {
+    width: 100%;
+    padding: 14px;
+    border-radius: 14px;
+    border: 2px solid #e2e8f0;
+    background: white;
+    font-size: 15px;
+    font-family: 'Vazirmatn';
+}
+
+    .service-modal {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: rgba(0,0,0,0.45);
+        backdrop-filter: blur(6px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+        opacity: 0;
+        pointer-events: none;
+        transition: 0.25s ease;
+    }
+
+    .service-modal.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .service-box {
+        background: rgba(255,255,255,0.88);
+        backdrop-filter: blur(18px);
+        width: 92%;
+        max-width: 380px;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 20px 50px rgba(11, 37, 71, 0.25);
+        animation: popUp 0.32s cubic-bezier(.2,.9,.2,1);
+        text-align: right;
+        font-family: 'Vazirmatn', sans-serif;
+        border: 1px solid rgba(30,64,175,0.08);
+    }
+
+    @keyframes popUp {
+        from { transform: translateY(18px) scale(.98); opacity: 0; }
+        to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .service-header {
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:10px;
+        margin-bottom:12px;
+    }
+
+    .service-box h3 {
+        font-size:18px;
+        margin:0;
+        color:#1e3a8a;
+        font-weight:900;
+    }
+
+    .close-service {
+        width:36px;
+        height:36px;
+        background:linear-gradient(90deg,#3b82f6,#1d4ed8);
+        color:white;
+        border-radius:10px;
+        border:none;
+        cursor:pointer;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-weight:800;
+        transition:.18s;
+    }
+    .close-service:hover { transform:translateY(-2px); background:#dc2626; }
+
+    .service-select {
+        width:100%;
+        padding:12px 14px;
+        border-radius:12px;
+        border:2px solid #e2e8f0;
+        background:white;
+        font-size:15px;
+        font-family:'Vazirmatn';
+        box-shadow:0 8px 20px rgba(30,64,175,0.03);
+    }
+
+    .apply-btn {
+        display:block;
+        width:100%;
+        margin-top:14px;
+        padding:12px 16px;
+        border-radius:12px;
+        border:none;
+        background:linear-gradient(90deg,#3b82f6,#1d4ed8);
+        color:white;
+        font-weight:800;
+        cursor:pointer;
+        font-family:'Vazirmatn';
+        box-shadow:0 12px 30px rgba(29,78,216,0.18);
+        transition:.18s;
+    }
+    .apply-btn:hover { transform:translateY(-3px); }
+
+    /* کوچک‌تر کردن مودال روی موبایل */
+    @media (max-width: 480px) {
+        .service-box { padding:16px; border-radius:16px; }
+        .service-box h3 { font-size:16px; }
+        .close-service { width:34px; height:34px; }
+    }
+
+    #serviceFilter {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    pointer-events: none !important;
+}
