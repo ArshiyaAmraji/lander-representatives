@@ -33,11 +33,12 @@ body {
     flex-direction: row-reverse;
     min-height: 100vh;
     padding-top: 78px;
+    padding-bottom: 100px;
 }
 
 #map {
     flex: 1;
-    height: calc(100vh - 135px);
+    height: calc(100vh - 110px);
     top: 12px;
     border-radius: 20px;
     overflow: hidden;
@@ -67,7 +68,7 @@ body {
     box-shadow: 0 15px 50px rgba(0, 0, 0, .1);
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: calc(100vh - 100px);
 }
 
 .list-box h2 {
@@ -231,8 +232,8 @@ body {
 .leaflet-control-attribution {
     background: rgba(255, 255, 255, 0.9) !important;
     border-radius: 10px !important;
-    padding: 4px 12px !important;
-    font-size: 12px;
+    padding: 4px 8px !important;
+    font-size: 2px;
 }
 
 /* موبایل */
@@ -243,33 +244,32 @@ body {
 
 /* فقط روی موبایل پاپ‌آپ کوچکتر بشه */
 @media (max-width: 480px) {
-    /* روش درست: فقط محتوای داخل پاپ‌آپ رو کوچیک کن */
     .leaflet-popup-content {
-        width: 240px !important;     /* عرض مناسب برای موبایل */
-        margin: 12px !important;
+        width: 160px !important;     /* عرض مناسب برای موبایل */
+        margin: 10px !important;
         padding: 0 !important;
     }
 
     .popup-content {
-        padding: 14px 16px !important;
-        min-width: auto !important;
-        max-width: none !important;
+        padding: 5px 5px !important;
+        min-width: 100px !important;
+        max-width: 180px !important;
     }
 
     .popup-content h4 {
-        font-size: 16px !important;
-        margin-bottom: 8px !important;
+        font-size: 10px !important;
+        margin-bottom: 6px !important;
     }
 
     .popup-content p {
-        font-size: 13.5px !important;
+        font-size: 8px !important;
         line-height: 1.6 !important;
-        margin: 6px 0 !important;
+        margin: 4px 0 !important;
     }
 
     .neshan-btn {
         padding: 9px 20px !important;
-        font-size: 13.5px !important;
+        font-size: 10px !important;
         margin-top: 10px !important;
     }
 
@@ -282,6 +282,8 @@ body {
         width: 30px !important;
         height: 15px !important;
     }
+
+
 }
 
 @media (max-width: 360px) {
@@ -306,12 +308,13 @@ body {
         margin: 0 15px 0 15px;
         padding: 24px 20px;
         box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        height: 100%;
     }
 
 
     #map {
-        height: 55vh;
-        min-height: 480px;
+        height: 75vh;
+        min-height: 75vh;
         margin: 0 31px 12px 31px;
         border-radius: 28px;
         order: 2;
@@ -374,18 +377,23 @@ body {
     .map-hint {
         top: 12px;
         right: 12px;
-        font-size: 13.5px;
-        padding: 9px 14px;
+        font-size: 5px;
+        padding: 7px 10px;
         border-radius: 14px;
     }
 }
 
 @media (max-width: 480px) {
     .map-hint {
-        top: 10px;
-        right: 10px;
-        font-size: 13px;
+        top: 7px;
+        right: 7px;
+        font-size: 7px !important;
         padding: 8px 12px;
+    }
+
+    .activity-tag {
+        font-size: 4px !important;
+        padding: 5px 5px 5px 5px !important;
     }
 }
 

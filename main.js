@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
     map = L.map('map', {
         center: [32.4279, 53.6880],
         zoom: window.innerWidth <= 992 ? 5 : 6,
-        minZoom: window.innerWidth <= 992 ? 3.5 : 5.1,
+        minZoom: window.innerWidth <= 992 ? 4.8 : 5.1,
         maxZoom: 18,
         maxBounds: [[20, 38], [44, 70]],
         maxBoundsViscosity: 0.75,
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const markersLayer = L.layerGroup().addTo(map);
 
     const agencies = [
-        { city: "تهران", name: "دفتر مرکزی", lat: 35.73700107999796, lng: 51.432455436116015, addr: "تهران، خیابان سهروردی، خیابان خرمشهر، خیابان عشقیار (نیلوفر)، کوچه چهارم (حورسی)، پلاک ۱", phone: "09127146489 / 02136483529", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
+        { city: "تهران", name: "دفتر مرکزی", lat: 35.736942070098976, lng:51.432493071143035, addr: "تهران، خیابان سهروردی، خیابان خرمشهر، خیابان عشقیار (نیلوفر)، کوچه چهارم (حورسی)، پلاک ۱", phone: "09127146489 / 02136483529", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
         { city: "تهران", name: "دیجی سام (سامان آذرخوش)", lat: 35.68696559794489, lng: 51.42165512396892, addr: "تهران، میدان امام خمینی، اول فردوسی، پشت شهرداری، پاساژ لباف، طبقه 1", phone: "09127146489 / 02136483529", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
         { city: "تهران", name: "فروشگاه موتوتیونینگ محسن (آقای شاملو)", lat: 35.654444524066555, lng: 51.49072091700788, addr: "تهران، اتوبان بسیج، ۲۰ متری افسریه، ۱۵ متری اول، نبش کوچه کنگاوری (۲۹)", phone: "02133145521 / 02138333099", type: "ردیاب جی‌پی‌اس موتورسیکلت" },
         { city: "تهران", name: "فروشگاه رحمانی (آقای مهران رحمانی)", lat: 35.7012, lng: 51.3456, addr: "تهران، خیابان عباسی، نبش دومین کوچه سمت چپ، پلاک ۲۹۴", phone: "09128404537 / 02155418982", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
@@ -119,25 +119,25 @@ document.addEventListener('DOMContentLoaded', function () {
             minWidth: 280,
             autoPan: true,
             keepInView: true,
-            autoPanPaddingTopLeft: isMobile ? L.point(60, 140) : L.point(60, 140),
-            autoPanPaddingBottomRight: isMobile ? L.point(60, 100) : L.point(60, 100)
+            // autoPanPaddingTopLeft: isMobile ? L.point(60, 140) : L.point(60, 140),
+            // autoPanPaddingBottomRight: isMobile ? L.point(60, 100) : L.point(60, 100)
         };
 
         const marker = L.marker([a.lat, a.lng], { icon: bluePin })
             .bindPopup(popupHtml, popupOptions);
 
-        marker.on('popupopen', () => {
-            map.setMaxBounds(null);
-            map.options.maxBoundsViscosity = 0;
-            map.options.autoPan = false;
-        });
+        // marker.on('popupopen', () => {
+        //     map.setMaxBounds(null);
+        //     map.options.maxBoundsViscosity = 0;
+        //     map.options.autoPan = false;
+        // });
 
-        // ✅ بازگرداندن محدودیت بعد از بسته شدن پاپ‌آپ
-        marker.on('popupclose', () => {
-            map.setMaxBounds(IRAN_BOUNDS);
-            map.options.maxBoundsViscosity = 0.75;
-            map.options.autoPan = true;
-        });
+        // // ✅ بازگرداندن محدودیت بعد از بسته شدن پاپ‌آپ
+        // marker.on('popupclose', () => {
+        //     map.setMaxBounds(IRAN_BOUNDS);
+        //     map.options.maxBoundsViscosity = 0.75;
+        //     map.options.autoPan = true;
+        // });
 
 
         // اضافه کردن مارکر به لایه
