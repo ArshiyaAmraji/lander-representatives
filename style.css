@@ -395,6 +395,10 @@ body {
         font-size: 4px !important;
         padding: 5px 5px 5px 5px !important;
     }
+
+    .activity-badge {
+        font-size: 7px !important;
+    }
 }
 
 /* نوع فعالیت در لیست */
