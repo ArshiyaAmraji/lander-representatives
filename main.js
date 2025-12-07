@@ -20,6 +20,12 @@ document.addEventListener('DOMContentLoaded', function () {
         zoomControl: false
     });
 
+    const nearestBtn = document.getElementById('findNearestBtn');
+    if (nearestBtn) {
+        nearestBtn.addEventListener('click', findNearestAgency);
+    }
+
+
 
     function updateMapView() {
         if (window.innerWidth <= 992) {
@@ -328,25 +334,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 // دکمه پیدا کردن نزدیک‌ترین نمایندگی
-function addNearestButton() {
-    const buttonHTML = `
-        <div style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:1000;">
-            <button id="findNearestBtn" style="
-                background:linear-gradient(135deg,#10b981,#059669);
-                color:white;font-family:Vazirmatn,sans-serif;
-                font-weight:900;font-size:16px;padding:14px 28px;
-                border:none;border-radius:50px;box-shadow:0 10px 30px rgba(16,185,129,0.4);
-                cursor:pointer;backdrop-filter:blur(10px);transition:all .3s;
-            " onmouseover="this.style.transform='translateY(-4px)'"
-               onmouseout="this.style.transform='translateY(0)'">
-                نزدیک‌ترین نمایندگی به من
-            </button>
-        </div>
-    `;
-    document.body.insertAdjacentHTML('beforeend', buttonHTML);
+// function addNearestButton() {
+//     const buttonHTML = `
+//         <div style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:1000;">
+//             <button id="findNearestBtn" style="
+//                 background:linear-gradient(135deg,#10b981,#059669);
+//                 color:white;font-family:Vazirmatn,sans-serif;
+//                 font-weight:900;font-size:16px;padding:14px 28px;
+//                 border:none;border-radius:50px;box-shadow:0 10px 30px rgba(16,185,129,0.4);
+//                 cursor:pointer;backdrop-filter:blur(10px);transition:all .3s;
+//             " onmouseover="this.style.transform='translateY(-4px)'"
+//                onmouseout="this.style.transform='translateY(0)'">
+//                 نزدیک‌ترین نمایندگی به من
+//             </button>
+//         </div>
+//     `;
+//     document.body.insertAdjacentHTML('beforeend', buttonHTML);
 
-    document.getElementById('findNearestBtn').addEventListener('click', findNearestAgency);
-}
+//     document.getElementById('findNearestBtn').addEventListener('click', findNearestAgency);
+// }
 
 function findNearestAgency() {
     const btn = document.getElementById('findNearestBtn');
@@ -427,6 +433,5 @@ function findNearestAgency() {
 }
 
 
-addNearestButton();
-
+// addNearestButton();
 
