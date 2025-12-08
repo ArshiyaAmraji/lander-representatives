@@ -332,14 +332,45 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function sortAgenciesByDistance(userLatLng) {
         agencyMarkers.forEach(obj => {
-            obj.distance = map.distance(userLatLng, obj.marker.getLatLng());
+            const markerLatLng = obj.marker.getLatLng();
+            obj.distance = map.distance(userLatLng, markerLatLng) / 1000; // به کیلومتر
         });
 
+        // مرتب‌سازی بر اساس فاصله
         agencyMarkers.sort((a, b) => a.distance - b.distance);
 
         const list = document.getElementById('agencyList');
         list.innerHTML = '';
-        agencyMarkers.forEach(obj => list.appendChild(obj.element));
+
+        agencyMarkers.forEach((obj, index) => {
+            // حذف کلاس قبلی نزدیک‌ترین
+            obj.element.classList.remove('nearest-one');
+
+            // فقط نزدیک‌ترین رنگ ویژه بگیره
+            if (index === 0) {
+                obj.element.classList.add('nearest-one');
+            }
+
+            // ساخت متن فاصله
+            const km = obj.distance.toFixed(1);
+            const distanceText = `<div class="distance-tag ${index === 0 ? 'nearest' : ''}">
+                ${index === 0 ? 'نزدیک‌ترین • ' : ''}${km} کیلومتر
+            </div>`;
+
+            // حذف فاصله قبلی (اگر وجود داشت)
+            const oldTag = obj.element.querySelector('.distance-tag');
+            if (oldTag) oldTag.remove();
+
+            // اضافه کردن تگ فاصله بعد از activity-badge
+            const badge = obj.element.querySelector('.activity-badge');
+            if (badge) {
+                badge.insertAdjacentHTML('afterend', distanceText);
+            } else {
+                obj.element.querySelector('strong').insertAdjacentHTML('afterend', distanceText);
+            }
+
+            list.appendChild(obj.element);
+        });
     }
 
     // --------------------------------------------------
