@@ -98,23 +98,62 @@ document.addEventListener('DOMContentLoaded', function () {
     // --------------------------------------------------
     // ساخت مارکرها و آیتم‌های لیست
     // --------------------------------------------------
+// تابع مشترک برای ساخت شماره تلفن (با آیکون و چند شماره)
+    function getPhoneHtml(phone, forPopup = false) {
+        const phones = phone.split('/').map(p => p.trim());
+        let html = '';
+
+        phones.forEach((p, idx) => {
+            if (idx > 0) {
+                html += ' <span class="phone-separator">•</span> ';
+            }
+
+            if (forPopup) {
+                // فقط توی پاپ‌آپ: بدون آیکون
+                html += `<a href="tel:${p}" class="phone-link popup-only">${p}</a>`;
+            } else {
+                // فقط توی لیست: با آیکون
+                html += `
+                    <a href="tel:${p}" class="phone-link">
+                        <svg class="phone-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                            <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                        </svg>
+                        ${p}
+                    </a>`;
+            }
+        });
+
+        return html;
+    }
+
     agencies.forEach(a => {
         const title = a.city + (a.name ? ' — ' + a.name : '');
         const gmapUrl = `https://www.google.com/maps/search/?api=1&query=${a.lat},${a.lng}`;
         const isMobile = window.innerWidth <= 992;
 
-        const popupHtml = `
-            <div class="popup-content">
-                <h4>${title}</h4>
-                <p><strong>آدرس:</strong> ${a.addr}</p>
-                <p><strong>تلفن:</strong> <a href="tel:${a.phone}">${a.phone}</a></p>
-                <p><strong>نوع فعالیت:</strong> 
-                    <span class="activity-tag" style="background:${getTypeColor(a.type)}">${a.type}</span>
-                </p>
-                <a href="${gmapUrl}" target="_blank" class="neshan-btn" style="background:#10b981">
-                    مسیریابی با گوگل مپ
-                </a>
-            </div>`;
+        // پاپ‌آپ روی نقشه
+    const popupHtml = `
+        <div class="popup-content">
+            <h4>${title}</h4>
+            <p><strong>آدرس:</strong> ${a.addr}</p>
+            
+            <!-- نوع فعالیت اول -->
+            <p class="popup-activity">
+                <strong>نوع فعالیت:</strong> 
+                <span class="activity-tag" style="background:${getTypeColor(a.type)}">
+                    ${a.type}
+                </span>
+            </p>
+            
+            <!-- تلفن بعدش -->
+            <p class="popup-phone-line">
+                <strong>تلفن:</strong> ${getPhoneHtml(a.phone, true)}
+            </p>
+            
+            <a href="${gmapUrl}" target="_blank" class="neshan-btn" style="background:#10b981">
+                مسیریابی با گوگل مپ
+            </a>
+        </div>`;
 
         const popupOptions = {
             maxWidth: 340,
@@ -137,40 +176,28 @@ document.addEventListener('DOMContentLoaded', function () {
                 ${a.type}
             </div>
             <small class="agency-address">
-                ${a.addr}<br>
-                <a href="tel:${a.phone}" style="color:#1e40af;font-weight:600">${a.phone}</a>
-            </small>`;
+                ${a.addr}
+            </small>
+            <div class="phone-section">
+                ${getPhoneHtml(a.phone)}
+            </div>`;
 
         item.onclick = () => {
             const offsetLat = isMobile ? 0.05 : 0.03;
             const targetCenter = [a.lat + offsetLat, a.lng];
-
-            map.setView(targetCenter, isMobile ? 14.5 : 15, {
-                animate: true,
-                duration: 0.6
-            });
-
+            map.setView(targetCenter, isMobile ? 14.5 : 15, { animate: true });
             marker.openPopup();
-
-            if (isMobile) {
-                setTimeout(() => {
-                    document.getElementById('map').scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'center'
-                    });
-                }, 600);
-            }
         };
-
-        listContainer.appendChild(item);
 
         // ذخیره برای فیلتر و مرتب‌سازی
         agencyMarkers.push({
             marker: marker,
             element: item,
-            type: a.type,
-            text: item.textContent.toLowerCase()
+            text: `${a.city} ${a.name} ${a.addr} ${a.phone} ${a.type}`.toLowerCase(),
+            type: a.type
         });
+
+        listContainer.appendChild(item);
     });
 
     // --------------------------------------------------

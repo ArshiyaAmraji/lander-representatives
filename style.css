@@ -87,13 +87,15 @@ body {
 #searchBox,
 .province-select {
     width: 100%;
+    height: 6%;
     padding: 16px 20px;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     border: 2px solid #e2e8f0;
     border-radius: 16px;
-    font-size: 17px;
+    font-size: 13px;
     font-family: 'Vazirmatn', sans-serif;
     background: #f8fafc;
+
 }
 
 #searchBox:focus,
@@ -417,12 +419,14 @@ body {
 /* نوع فعالیت در پاپ‌آپ نقشه */
 .activity-tag {
     display: inline-block;
-    color: white;
-    font-size: 11px;
+    color: rgb(114, 114, 114);
+    font-size: 13px;
     font-weight: 700;
-    padding: 5px 12px;
+    padding: 5px 1px;
     border-radius: 20px;
     margin-top: 6px;
+    background-color: #ffffff !important;
+    border: #1e40af 2px !important;
 }
 
 .agency-address {
@@ -725,7 +729,7 @@ body {
 
 .nearest-inline-btn {
     width: 100%;
-    margin-bottom: 16px;
+    margin-bottom: 7px;
     padding: 6px 6px;
     border-radius: 16px;
     border: none;
@@ -828,4 +832,65 @@ body {
     backdrop-filter: blur(4px);
     transition: all 0.3s ease;
 }
+
+#searchBox {
+    height: 8px !important;
+    /* margin-bottom: px; */
 }
+}
+
+/* استایل شماره تلفن */
+.phone-section {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 15px;
+}
+
+.phone-link {
+    color: #1d4ed8 !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+
+.phone-link:hover {
+    color: #2563eb !important;
+    transform: translateY(-1px);
+}
+
+.phone-icon {
+    stroke: currentColor;
+    width: 18px;
+    height: 18px;
+    margin-bottom: 5px;
+}
+
+/* برای نزدیک‌ترین نمایندگی (سبز) */
+.agency-item.nearest-one .phone-section,
+.agency-item.nearest-one .phone-link,
+.agency-item.nearest-one .phone-link:hover {
+    color: white !important;
+}
+
+@media(max-width: 480px){
+    .phone-link {
+    color: #1d4ed8 !important;
+    font-weight: 400 !important;
+    font-size: 11px !important;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+    margin-top: 5px !important;
+    
+}
+}
+
