@@ -1,42 +1,44 @@
-// >>> FIX: globals for map & markers so location code (outside DOMContentLoaded) can use them
+// >>> متغیرهای سراسری برای دسترسی از بیرون DOMContentLoaded
 let map;
 let agencyMarkers = [];
 let userLocation = null;
 let userMarker = null;
-// let isFocusingOnMarker = false;
+let currentProvince = '';
+let currentCity = '';
+let currentService = '';
+let markersLayer;
 
 const IRAN_BOUNDS = [[20, 38], [44, 70]];
 
+function updateMapView() {
+    if (window.innerWidth <= 992) {
+        map.setView([33.5, 52.5], 4.6);
+    } else {
+        map.fitBounds([[25, 44], [39.8, 63.4]], { padding: [50, 50] });
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function () {
+
+    // --------------------------------------------------
+    // ابتدایی‌سازی نقشه
+    // --------------------------------------------------
     map = L.map('map', {
         center: [32.4279, 53.6880],
         zoom: window.innerWidth <= 992 ? 5 : 6,
         minZoom: window.innerWidth <= 992 ? 4.8 : 5.1,
         maxZoom: 18,
-        maxBounds: [[20, 38], [44, 70]],
+        maxBounds: IRAN_BOUNDS,
         maxBoundsViscosity: 0.75,
-        zoomSnap: 0.1,   // گام زوم
-        zoomDelta: 1,  // تغییر با اسکرول/پینچ
+        zoomSnap: 0.1,
+        zoomDelta: 1,
         zoomControl: false
     });
 
-    const nearestBtn = document.getElementById('findNearestBtn');
-    if (nearestBtn) {
-        nearestBtn.addEventListener('click', findNearestAgency);
-    }
-
-
-
-    function updateMapView() {
-        if (window.innerWidth <= 992) {
-            map.setView([33.5, 52.5], 4.6);
-        } else {
-            map.fitBounds([[25, 44], [39.8, 63.4]], { padding: [50, 50] });
-        }
-    }
-
-    updateMapView();
-    window.addEventListener('resize', updateMapView);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 19
+    }).addTo(map);
 
     L.control.zoom({
         position: 'topleft',
@@ -46,13 +48,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     L.control.attribution({ position: 'bottomleft', prefix: '' }).addTo(map);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors',
-        maxZoom: 19
-    }).addTo(map);
+    updateMapView();
+    window.addEventListener('resize', updateMapView);
 
-
-
+    // --------------------------------------------------
+    // آیکون‌ها و لایه مارکرها
+    // --------------------------------------------------
     const bluePin = L.icon({
         iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
@@ -62,11 +63,13 @@ document.addEventListener('DOMContentLoaded', function () {
         shadowSize: [41, 41]
     });
 
-    // لایه مخصوص مارکرها (برای فیلتر کردن)
-    const markersLayer = L.layerGroup().addTo(map);
+    markersLayer = L.layerGroup().addTo(map);
 
+    // --------------------------------------------------
+    // داده‌های نمایندگی‌ها
+    // --------------------------------------------------
     const agencies = [
-        { city: "تهران", name: "دفتر مرکزی", lat: 35.736942070098976, lng:51.432493071143035, addr: "تهران، خیابان سهروردی، خیابان خرمشهر، خیابان عشقیار (نیلوفر)، کوچه چهارم (حورسی)، پلاک ۱", phone: "09127146489 / 02136483529", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
+        { city: "تهران", name: "دفتر مرکزی", lat: 35.736942070098976, lng: 51.432493071143035, addr: "تهران، خیابان سهروردی، خیابان خرمشهر، خیابان عشقیار (نیلوفر)، کوچه چهارم (حورسی)، پلاک ۱", phone: "09127146489 / 02136483529", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
         { city: "تهران", name: "دیجی سام (سامان آذرخوش)", lat: 35.68696559794489, lng: 51.42165512396892, addr: "تهران، میدان امام خمینی، اول فردوسی، پشت شهرداری، پاساژ لباف، طبقه 1", phone: "09127146489 / 02136483529", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
         { city: "تهران", name: "فروشگاه موتوتیونینگ محسن (آقای شاملو)", lat: 35.654444524066555, lng: 51.49072091700788, addr: "تهران، اتوبان بسیج، ۲۰ متری افسریه، ۱۵ متری اول، نبش کوچه کنگاوری (۲۹)", phone: "02133145521 / 02138333099", type: "ردیاب جی‌پی‌اس موتورسیکلت" },
         { city: "تهران", name: "فروشگاه رحمانی (آقای مهران رحمانی)", lat: 35.7012, lng: 51.3456, addr: "تهران، خیابان عباسی، نبش دومین کوچه سمت چپ، پلاک ۲۹۴", phone: "09128404537 / 02155418982", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
@@ -84,66 +87,48 @@ document.addEventListener('DOMContentLoaded', function () {
     ];
 
     const listContainer = document.getElementById('agencyList');
-    let currentProvince = '';
-    let currentService = '';
 
-    // آرایه برای نگهداری مارکر + المنت لیست (برای فیلتر همزمان)
-
+    // --------------------------------------------------
+    // توابع کمکی
+    // --------------------------------------------------
     function getTypeColor(type) {
         return '#2563eb';
     }
 
+    // --------------------------------------------------
+    // ساخت مارکرها و آیتم‌های لیست
+    // --------------------------------------------------
     agencies.forEach(a => {
         const title = a.city + (a.name ? ' — ' + a.name : '');
         const gmapUrl = `https://www.google.com/maps/search/?api=1&query=${a.lat},${a.lng}`;
-
-        // ساخت مارکر
         const isMobile = window.innerWidth <= 992;
 
         const popupHtml = `
-        <div class="popup-content">
-            <h4>${title}</h4>
-            <p><strong>آدرس:</strong> ${a.addr}</p>
-            <p><strong>تلفن:</strong> <a href="tel:${a.phone}">${a.phone}</a></p>
-            <p><strong>نوع فعالیت:</strong> 
-            <span class="activity-tag" style="background:${getTypeColor(a.type)}">${a.type}</span>
-            </p>
-            <a href="${gmapUrl}" target="_blank" class="neshan-btn" style="background:#10b981">
-            مسیریابی با گوگل مپ
-            </a>
-        </div>
-        `;
+            <div class="popup-content">
+                <h4>${title}</h4>
+                <p><strong>آدرس:</strong> ${a.addr}</p>
+                <p><strong>تلفن:</strong> <a href="tel:${a.phone}">${a.phone}</a></p>
+                <p><strong>نوع فعالیت:</strong> 
+                    <span class="activity-tag" style="background:${getTypeColor(a.type)}">${a.type}</span>
+                </p>
+                <a href="${gmapUrl}" target="_blank" class="neshan-btn" style="background:#10b981">
+                    مسیریابی با گوگل مپ
+                </a>
+            </div>`;
 
         const popupOptions = {
             maxWidth: 340,
             minWidth: 280,
             autoPan: true,
-            keepInView: true,
-            // autoPanPaddingTopLeft: isMobile ? L.point(60, 140) : L.point(60, 140),
-            // autoPanPaddingBottomRight: isMobile ? L.point(60, 100) : L.point(60, 100)
+            keepInView: true
         };
 
         const marker = L.marker([a.lat, a.lng], { icon: bluePin })
             .bindPopup(popupHtml, popupOptions);
 
-        // marker.on('popupopen', () => {
-        //     map.setMaxBounds(null);
-        //     map.options.maxBoundsViscosity = 0;
-        //     map.options.autoPan = false;
-        // });
-
-        // // ✅ بازگرداندن محدودیت بعد از بسته شدن پاپ‌آپ
-        // marker.on('popupclose', () => {
-        //     map.setMaxBounds(IRAN_BOUNDS);
-        //     map.options.maxBoundsViscosity = 0.75;
-        //     map.options.autoPan = true;
-        // });
-
-
-        // اضافه کردن مارکر به لایه
         marker.addTo(markersLayer);
 
-        // ساخت آیتم لیست
+        // آیتم لیست
         const item = document.createElement('div');
         item.className = 'agency-item';
         item.innerHTML = `
@@ -154,29 +139,16 @@ document.addEventListener('DOMContentLoaded', function () {
             <small class="agency-address">
                 ${a.addr}<br>
                 <a href="tel:${a.phone}" style="color:#1e40af;font-weight:600">${a.phone}</a>
-            </small>
-        `;
+            </small>`;
 
         item.onclick = () => {
-
-            const isMobile = window.innerWidth <= 992;
-
-            // مقدار جابجایی عمودی برای وسط قرار گرفتن پاپ‌آپ
             const offsetLat = isMobile ? 0.05 : 0.03;
+            const targetCenter = [a.lat + offsetLat, a.lng];
 
-            const targetCenter = [
-                a.lat + offsetLat,
-                a.lng
-            ];
-
-            map.setView(
-                targetCenter,
-                isMobile ? 14.5 : 15,
-                {
-                    animate: true,
-                    duration: 0.6
-                }
-            );
+            map.setView(targetCenter, isMobile ? 14.5 : 15, {
+                animate: true,
+                duration: 0.6
+            });
 
             marker.openPopup();
 
@@ -190,53 +162,20 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         };
 
-
         listContainer.appendChild(item);
 
-        // ذخیره برای فیلتر همزمان
+        // ذخیره برای فیلتر و مرتب‌سازی
         agencyMarkers.push({
             marker: marker,
             element: item,
             type: a.type,
-            text: item.textContent.toLowerCase() // برای جستجوی سریع
+            text: item.textContent.toLowerCase()
         });
     });
 
-    // تابع فیلتر جدید (همزمان لیست + نقشه)
-    function filterList() {
-        const term = document.getElementById('searchBox').value.trim().toLowerCase();
-
-        markersLayer.clearLayers(); // پاک کردن همه مارکرها از نقشه
-
-        let hasVisible = false;
-
-        agencyMarkers.forEach(obj => {
-            const el = obj.element;
-            const fullText = obj.text || el.textContent.toLowerCase();
-
-            const matchesSearch = fullText.includes(term);
-            const matchesProvince = !currentProvince || fullText.includes(currentProvince);
-            const matchesService = !currentService || obj.type.includes(currentService);
-
-            const shouldShow = matchesSearch && matchesProvince && matchesService;
-
-            el.style.display = shouldShow ? 'block' : 'none';
-
-            if (shouldShow) {
-                obj.marker.addTo(markersLayer);
-                hasVisible = true;
-            }
-        });
-
-        // اگر هیچ نمایندگی‌ای پیدا نشد، به نمای کلی ایران برگرد
-        if (!hasVisible) {
-            updateMapView();
-        }
-    }
-
-    // رویدادهای فیلتر
-    document.getElementById('searchBox').addEventListener('input', filterList);
-
+    // --------------------------------------------------
+    // فیلترها و انتخاب استان/شهرستان
+    // --------------------------------------------------
     const provinceMap = {
         tehran: "تهران",
         alborz: "کرج",
@@ -248,42 +187,67 @@ document.addEventListener('DOMContentLoaded', function () {
         qom: "قم"
     };
 
-    document.getElementById('provinceSelect').addEventListener('change', function () {
-        currentProvince = provinceMap[this.value] || "";
+    const citiesByProvince = {
+        tehran: ["تهران", "ری", "شمیرانات", "اسلامشهر"],
+        alborz: ["کرج", "فردیس", "نظرآباد"],
+        khorasan: ["مشهد"],
+        esfahan: ["اصفهان"],
+        fars: ["شیراز"],
+        azerbaijan: ["تبریز"],
+        gilan: ["رشت"],
+        qom: ["قم"]
+    };
+
+    const provinceSelect = document.getElementById('provinceSelect');
+    const citySelect = document.getElementById('citySelect');
+
+    const configZoom = {
+        tehran: { center: [35.7210, 51.3890], zoom: 11 },
+        alborz: { center: [35.8350, 50.9700], zoom: 12 },
+        khorasan: { center: [36.2970, 59.6062], zoom: 12 },
+        esfahan: { center: [32.6539, 51.6660], zoom: 12 },
+        fars: { center: [29.5918, 52.5833], zoom: 12 },
+        azerbaijan: { center: [38.0667, 46.2833], zoom: 12 },
+        gilan: { center: [37.2808, 49.5832], zoom: 12 },
+        qom: { center: [34.6399, 50.8759], zoom: 13 }
+    };
+
+    provinceSelect.addEventListener('change', function () {
+        const key = this.value;
+        currentProvince = provinceMap[key] || '';
+
+        if (configZoom[key]) {
+            map.setView(configZoom[key].center, configZoom[key].zoom, { animate: true });
+        }
+
+        currentCity = '';
+        citySelect.innerHTML = '<option value="">همه شهرستان‌ها</option>';
+        citySelect.style.display = 'none';
+
+        if (key && citiesByProvince[key]) {
+            citiesByProvince[key].forEach(city => {
+                const opt = document.createElement('option');
+                opt.value = city;
+                opt.textContent = city;
+                citySelect.appendChild(opt);
+            });
+            citySelect.style.display = 'block';
+        }
+
         document.getElementById('searchBox').value = '';
         filterList();
-
-        if (!this.value) {
-            updateMapView();
-            return;
-        }
-
-        const config = {
-            tehran: { center: [35.7210, 51.3890], zoom: 11 },
-            alborz: { center: [35.8350, 50.9700], zoom: 12 },
-            khorasan: { center: [36.2970, 59.6062], zoom: 12 },
-            esfahan: { center: [32.6539, 51.6660], zoom: 12 },
-            fars: { center: [29.5918, 52.5833], zoom: 12 },
-            azerbaijan: { center: [38.0667, 46.2833], zoom: 12 },
-            gilan: { center: [37.2808, 49.5832], zoom: 12 },
-            qom: { center: [34.6399, 50.8759], zoom: 13 }
-        };
-
-        const c = config[this.value];
-        if (c) {
-            map.setView(c.center, c.zoom, { animate: true });
-            setTimeout(() => document.querySelector('.list-box').scrollIntoView({ behavior: 'smooth' }), 400);
-        }
     });
 
+    // جستجو
+    document.getElementById('searchBox').addEventListener('input', filterList);
+
     // فیلتر خدمات (از مودال)
-    const serviceFilter = document.getElementById("serviceFilter");
-    serviceFilter.onchange = () => {
-        currentService = serviceFilter.value.trim();
+    document.getElementById("serviceFilter").onchange = () => {
+        currentService = document.getElementById("serviceFilter").value.trim();
         filterList();
     };
 
-    // مودال خدمات (بدون تغییر — دقیقاً همون کد قبلی شما)
+    // مودال انتخاب خدمات
     (function () {
         const modal = document.getElementById("serviceModal");
         const filterBtn = document.getElementById("filterBtn");
@@ -293,9 +257,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const hiddenService = document.getElementById("serviceFilter");
 
         function openModal() {
-            if (hiddenService) {
-                serviceSelect.value = hiddenService.value || "";
-            }
+            if (hiddenService) serviceSelect.value = hiddenService.value || "";
             modal.classList.add("active");
             modal.setAttribute("aria-hidden", "false");
             serviceSelect.focus();
@@ -309,14 +271,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         filterBtn.addEventListener("click", openModal);
         closeService.addEventListener("click", closeModal);
-        modal.addEventListener("click", (e) => {
-            if (e.target === modal) closeModal();
-        });
-
-        document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape" && modal.classList.contains("active")) {
-                closeModal();
-            }
+        modal.addEventListener("click", e => e.target === modal && closeModal());
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape" && modal.classList.contains("active")) closeModal();
         });
 
         function applySelection() {
@@ -329,109 +286,122 @@ document.addEventListener('DOMContentLoaded', function () {
         applyBtn.addEventListener("click", applySelection);
         serviceSelect.addEventListener("change", applySelection);
     })();
-});
 
+    // --------------------------------------------------
+    // توابع فیلتر و مرتب‌سازی
+    // --------------------------------------------------
+    function filterList() {
+        const term = document.getElementById('searchBox').value.trim().toLowerCase();
+        markersLayer.clearLayers();
 
+        let hasVisible = false;
 
-// دکمه پیدا کردن نزدیک‌ترین نمایندگی
-// function addNearestButton() {
-//     const buttonHTML = `
-//         <div style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:1000;">
-//             <button id="findNearestBtn" style="
-//                 background:linear-gradient(135deg,#10b981,#059669);
-//                 color:white;font-family:Vazirmatn,sans-serif;
-//                 font-weight:900;font-size:16px;padding:14px 28px;
-//                 border:none;border-radius:50px;box-shadow:0 10px 30px rgba(16,185,129,0.4);
-//                 cursor:pointer;backdrop-filter:blur(10px);transition:all .3s;
-//             " onmouseover="this.style.transform='translateY(-4px)'"
-//                onmouseout="this.style.transform='translateY(0)'">
-//                 نزدیک‌ترین نمایندگی به من
-//             </button>
-//         </div>
-//     `;
-//     document.body.insertAdjacentHTML('beforeend', buttonHTML);
+        agencyMarkers.forEach(obj => {
+            const fullText = obj.text || obj.element.textContent.toLowerCase();
 
-//     document.getElementById('findNearestBtn').addEventListener('click', findNearestAgency);
-// }
+            const matchesSearch = fullText.includes(term);
+            const matchesProvince = !currentProvince || fullText.includes(currentProvince);
+            const matchesCity = !currentCity || fullText.includes(currentCity);
+            const matchesService = !currentService || obj.type.includes(currentService);
 
-function findNearestAgency() {
-    const btn = document.getElementById('findNearestBtn');
+            const shouldShow = matchesSearch && matchesProvince && matchesCity && matchesService;
 
-    if (!navigator.geolocation) {
-        alert('مرورگر از موقعیت مکانی پشتیبانی نمی‌کند');
-        return;
+            obj.element.style.display = shouldShow ? 'block' : 'none';
+
+            if (shouldShow) {
+                obj.marker.addTo(markersLayer);
+                hasVisible = true;
+            }
+        });
+
+        if (!hasVisible) updateMapView();
     }
 
-    btn.disabled = true;
-    btn.textContent = 'در حال دریافت موقعیت...';
+    function resetProvinceFilter() {
+        currentProvince = '';
+        currentCity = '';
+        document.getElementById('provinceSelect').value = '';
+        document.getElementById('searchBox').value = '';
 
-    // manual failsafe timeout (9s)
-    const manualTimeout = setTimeout(() => {
-        btn.disabled = false;
-        btn.textContent = 'تلاش مجدد';
-        alert('دریافت موقعیت بیش از حد طول کشید. GPS را فعال کنید و دوباره بزنید.');
-    }, 9000);
+        const citySelect = document.getElementById('citySelect');
+        citySelect.style.display = 'none';
+        citySelect.innerHTML = '<option value="">همه شهرستان‌ها</option>';
 
-    navigator.geolocation.getCurrentPosition(
-        position => {
-            clearTimeout(manualTimeout);
+        filterList();
+    }
 
-            userLocation = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude
-            };
+    function sortAgenciesByDistance(userLatLng) {
+        agencyMarkers.forEach(obj => {
+            obj.distance = map.distance(userLatLng, obj.marker.getLatLng());
+        });
 
-            // update user marker
-            if (userMarker) {
-                if (userMarker.remove) userMarker.remove();
-                userMarker = null;
-            }
+        agencyMarkers.sort((a, b) => a.distance - b.distance);
 
-            userMarker = L.marker([userLocation.lat, userLocation.lng], {
-                icon: L.icon({
-                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-                    iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
-                })
-            }).addTo(map).bindPopup('📍 شما اینجا هستید').openPopup();
+        const list = document.getElementById('agencyList');
+        list.innerHTML = '';
+        agencyMarkers.forEach(obj => list.appendChild(obj.element));
+    }
 
-            let nearest = null;
-            let minDist = Infinity;
+    // --------------------------------------------------
+    // پیدا کردن نزدیک‌ترین نمایندگی
+    // --------------------------------------------------
+    function findNearestAgency() {
+        const btn = document.getElementById('findNearestBtn');
 
-            // agencyMarkers is global now
-            agencyMarkers.forEach(obj => {
-                const d = map.distance([userLocation.lat, userLocation.lng], obj.marker.getLatLng());
-                if (d < minDist) { minDist = d; nearest = obj; }
-            });
-
-            if (nearest) {
-                map.setView(nearest.marker.getLatLng(), 16, { animate: true });
-                nearest.marker.openPopup();
-                nearest.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-
-            btn.disabled = false;
-            btn.textContent = 'نزدیک‌ترین نمایندگی به من';
-        },
-        error => {
-            clearTimeout(manualTimeout);
-            btn.disabled = false;
-            btn.textContent = 'تلاش مجدد';
-
-            if (error && error.code === 1) {
-                alert('دسترسی به موقعیت رد شده — در تنظیمات مرورگر Allow کنید.');
-            } else {
-                alert('خطا در دریافت موقعیت. GPS/اینترنت را بررسی کنید.');
-            }
-        },
-        {
-            enableHighAccuracy: false,
-            timeout: 10000,
-            maximumAge: 60000
+        if (!navigator.geolocation) {
+            alert('مرورگر از موقعیت مکانی پشتیبانی نمی‌کند');
+            return;
         }
-    );
-}
 
+        resetProvinceFilter();
+        btn.disabled = true;
+        btn.textContent = 'در حال دریافت موقعیت...';
 
-// addNearestButton();
+        navigator.geolocation.getCurrentPosition(
+            position => {
+                userLocation = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
 
+                if (userMarker) map.removeLayer(userMarker);
+
+                userMarker = L.marker([userLocation.lat, userLocation.lng], {
+                    icon: L.icon({
+                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41]
+                    })
+                })
+                    .addTo(map)
+                    .bindPopup('موقعیت شما')
+                    .openPopup();
+
+                sortAgenciesByDistance([userLocation.lat, userLocation.lng]);
+
+                markersLayer.clearLayers();
+                agencyMarkers.forEach(obj => obj.marker.addTo(markersLayer));
+
+                const nearest = agencyMarkers[0];
+                if (nearest) {
+                    map.setView(nearest.marker.getLatLng(), 16, { animate: true });
+                    nearest.marker.openPopup();
+                    nearest.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+
+                btn.disabled = false;
+                btn.textContent = 'نزدیک‌ترین نمایندگی به من';
+            },
+            () => {
+                btn.disabled = false;
+                btn.textContent = 'تلاش مجدد';
+                alert('خطا در دریافت موقعیت مکانی');
+            }
+        );
+    }
+
+    // اتصال دکمه نزدیک‌ترین نمایندگی
+    const nearestBtn = document.getElementById('findNearestBtn');
+    if (nearestBtn) nearestBtn.addEventListener('click', findNearestAgency);
+});

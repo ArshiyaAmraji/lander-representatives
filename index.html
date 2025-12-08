@@ -41,6 +41,7 @@
                         <option value="qom">قم</option>
                     </select>
 
+
                     <button id="filterBtn" class="filter-mini-btn" aria-label="فیلتر خدمات">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <line x1="4" y1="21" x2="4" y2="14"></line>
@@ -55,8 +56,11 @@
                         </svg>
                     </button>
                 </div>
+                
+                    <select id="citySelect" style="display:none;">
+                        <option value="">همه شهرستان‌ها</option>
+                    </select>
 
-                <!-- این select پنهان است و توسط main.js شما استفاده می‌شود -->
                 <select id="serviceFilter" class="filter-select" style="display:none">
                     <option value="">همه خدمات</option>
                     <option value="ردیاب جی‌پی‌اس خودرو">ردیاب جی‌پی‌اس خودرو</option>
