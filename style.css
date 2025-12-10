@@ -211,42 +211,88 @@ body {
     }
 
 @media (max-width: 480px) {
-    .leaflet-popup-content {
-        width: 160px !important;     
-        margin: 10px !important;
+    /* پاپ‌آپ نقشه روی موبایل — کاملاً وسط، خوانا و حرفه‌ای */
+    .leaflet-popup-content-wrapper {
+        border-radius: 18px !important;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25) !important;
         padding: 0 !important;
+        max-width: 260px !important;     /* بهترین عرض برای اکثر گوشی‌ها */
+        margin: 0 auto !important;
+    }
+
+    .leaflet-popup-content {
+        width: 100% !important;
+        max-width: 260px !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+        text-align: center !important;   /* این خط خیلی مهمه */
     }
 
     .popup-content {
-        padding: 5px 5px !important;
-        min-width: 100px !important;
-        max-width: 180px !important;
+        padding: 14px 12px !important;
+        text-align: center !important;
+        display: flex;
+        flex-direction: column;
+        align-items: center;             /* همه چیز دقیقاً وسط */
+        justify-content: center;
+        min-width: unset !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
     }
 
     .popup-content h4 {
-        font-size: 13px !important;
-        margin-bottom: 6px !important;
+        font-size: 15px !important;      /* خوانا باشه */
+        font-weight: 900;
+        margin: 0 0 0px 0 !important;
+        color: #1e40af;
+        line-height: 1.4;
     }
 
     .popup-content p {
-        font-size: 10px !important;
+        font-size: 12.5px !important;
         line-height: 1.6 !important;
-        margin: 4px 0 !important;
+        margin: 6px 0 !important;
+        color: #475569;
+    }
+
+    .popup-content strong {
+        color: #1e40af;
+        font-weight: 700;
     }
 
     .neshan-btn {
-        padding: 9px 20px !important;
-        font-size: 10px !important;
-        margin-top: 10px !important;
+        margin: 12px auto px !important;
+        padding: 7px 10px !important;
+        font-size: 13px !important;      /* خوانا و کلیک‌پذیر */
+        width: fit-content !important;
+        min-width: 140px;
+        display: block;
+        border-radius: 14px !important;
     }
 
-    .leaflet-popup-content-wrapper {
-        max-width: 260px !important;
-        overflow: hidden !important;
+    /* اگر آدرس خیلی طولانی بود، خط ببره و نشکنه */
+    .popup-content p {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
     }
+}
 
-
-
+/* برای گوشی‌های خیلی کوچیک (مثل آیفون SE قدیمی) */
+@media (max-width: 360px) {
+    .leaflet-popup-content-wrapper,
+    .leaflet-popup-content {
+        max-width: 220px !important;
+    }
+    
+    .popup-content h4 {
+        font-size: 14px !important;
+    }
+    
+    .neshan-btn {
+        font-size: 12.5px !important;
+        padding: 9px 18px !important;
+    }
 }
 
 @media (max-width: 360px) {
@@ -836,4 +882,6 @@ body {
 
   }
 }
+
+
 

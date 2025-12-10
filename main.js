@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (forPopup) {
                 // فقط توی پاپ‌آپ: بدون آیکون
-                html += `<a href="tel:${p}" class="phone-link popup-only">${p}</a>`;
+                // html += `<a href="tel:${p}" class="phone-link popup-only">${p}</a>`;
             } else {
                 // فقط توی لیست: با آیکون
                 html += `
@@ -134,20 +134,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const popupHtml = `
         <div class="popup-content">
             <h4>${title}</h4>
-            <p><strong>آدرس:</strong> ${a.addr}</p>
-            
-            <!-- نوع فعالیت اول -->
-            <p class="popup-activity">
-                <strong>نوع فعالیت:</strong> 
-                <span class="activity-tag" style="background:${getTypeColor(a.type)}">
-                    ${a.type}
-                </span>
-            </p>
-            
-            <!-- تلفن بعدش -->
-            <p class="popup-phone-line">
-                <strong>تلفن:</strong> ${getPhoneHtml(a.phone, true)}
-            </p>
             
             <a href="${gmapUrl}" target="_blank" class="neshan-btn" style="background:#10b981">
                 مسیریابی با گوگل مپ
