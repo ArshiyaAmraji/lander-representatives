@@ -73,8 +73,8 @@ document.addEventListener('DOMContentLoaded', function () {
         { city: "تهران", name: "دیجی سام (سامان آذرخوش)", lat: 35.68696559794489, lng: 51.42165512396892, addr: "تهران، میدان امام خمینی، اول فردوسی، پشت شهرداری، پاساژ لباف، طبقه 1", phone: "09127146489 / 02136483529", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
         { city: "تهران", name: "فروشگاه موتوتیونینگ محسن (آقای شاملو)", lat: 35.654444524066555, lng: 51.49072091700788, addr: "تهران، اتوبان بسیج، ۲۰ متری افسریه، ۱۵ متری اول، نبش کوچه کنگاوری (۲۹)", phone: "02133145521 / 02138333099", type: "ردیاب جی‌پی‌اس موتورسیکلت" },
         { city: "تهران", name: "فروشگاه رحمانی (آقای مهران رحمانی)", lat: 35.7012, lng: 51.3456, addr: "تهران، خیابان عباسی، نبش دومین کوچه سمت چپ، پلاک ۲۹۴", phone: "09128404537 / 02155418982", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
-        { city: "تهران", name: "فروشگاه جام جم (آقای فرید نظری)", lat: 35.741102313508165, lng: 51.549681004715055, addr: "تهرانپارس، خیابان ۱۹۶ شرقی، پلاک ۲۲۹", phone: "09128300310 / 0217786751", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
-        { city: "تهران", name: "لندرشاپ (آقای رسولی)", lat: 35.71284720177635, lng: 51.36928971854059, addr: "تهران، ستارخان، بین شادمان و بهبودی، بعد از کوچه علی نجاری، پلاک ۲۴۴، طبقه اول", phone: "09122151330 / 02166559575", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
+        { city: "تهران", name: "فروشگاه جام جم (آقای فرید نظری)", lat: 35.74112645085245, lng:51.549589049711265, addr: "تهرانپارس، خیابان ۱۹۶ شرقی، پلاک ۲۲۹", phone: "09128300310 / 0217786751", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
+        { city: "تهران", name: "لندرشاپ (آقای رسولی)", lat: 35.71284445034936, lng:51.36932671244907, addr: "تهران، ستارخان، بین شادمان و بهبودی، بعد از کوچه علی نجاری، پلاک ۲۴۴، طبقه اول", phone: "09122151330 / 02166559575", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
         { city: "تهران", name: "فروشگاه علی (آقای احسان فکری)", lat: 35.745, lng: 51.39, addr: "خیابان شریعتی بعداز مترو قیطریه بلوار صبا پلاک ۱۶۳", phone: "09123129396", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
         { city: "تهران", name: "زنگوله (مهرداد گرجی)", lat: 35.735, lng: 51.3234, addr: "تهرانپارس، میدان شاهد، خیابان ۱۹۶ شرقی، بین خیابان ۱۳۱ و ۱۳۳، پلاک ۳۷۳", phone: "09354223037", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
         { city: "کرج", name: "نمایندگی کرج", lat: 35.8321, lng: 50.9654, addr: "جهانشهر، بلوار جمهوری", phone: "026-32511223", type: "فروش و نصب" },
@@ -98,7 +98,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // --------------------------------------------------
     // ساخت مارکرها و آیتم‌های لیست
     // --------------------------------------------------
-// تابع مشترک برای ساخت شماره تلفن (با آیکون و چند شماره)
     function getPhoneHtml(phone, forPopup = false) {
         const phones = phone.split('/').map(p => p.trim());
         let html = '';
@@ -172,12 +171,15 @@ document.addEventListener('DOMContentLoaded', function () {
         item.className = 'agency-item';
         item.innerHTML = `
             <strong>${title}</strong>
+            
             <div class="activity-badge" style="background:${getTypeColor(a.type)}">
                 ${a.type}
             </div>
-            <small class="agency-address">
+            
+            <div class="agency-address">
                 ${a.addr}
-            </small>
+            </div>
+            
             <div class="phone-section">
                 ${getPhoneHtml(a.phone)}
             </div>`;
@@ -215,8 +217,8 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     const citiesByProvince = {
-        tehran: ["تهران", "ری", "شمیرانات", "اسلامشهر"],
-        alborz: ["کرج", "فردیس", "نظرآباد"],
+        tehran: ["تهران", "ری", "اسلامشهر", "شهرقدس", "شهریار", "ملارد", "رباط‌کریم", "ورامین"],
+        alborz: ["کرج", "فردیس", "نظرآباد", "هشتگرد"],
         khorasan: ["مشهد"],
         esfahan: ["اصفهان"],
         fars: ["شیراز"],
@@ -229,15 +231,50 @@ document.addEventListener('DOMContentLoaded', function () {
     const citySelect = document.getElementById('citySelect');
 
     const configZoom = {
-        tehran: { center: [35.7210, 51.3890], zoom: 11 },
-        alborz: { center: [35.8350, 50.9700], zoom: 12 },
+        tehran: { center: [35.7210, 51.3890], zoom: 10 },
+        alborz: { center: [35.864412, 50.869161], zoom: 11 },
         khorasan: { center: [36.2970, 59.6062], zoom: 12 },
         esfahan: { center: [32.6539, 51.6660], zoom: 12 },
         fars: { center: [29.5918, 52.5833], zoom: 12 },
         azerbaijan: { center: [38.0667, 46.2833], zoom: 12 },
         gilan: { center: [37.2808, 49.5832], zoom: 12 },
-        qom: { center: [34.6399, 50.8759], zoom: 13 }
+        qom: { center: [34.6399, 50.8759], zoom: 12 }
     };
+
+    const cityZoom = {
+    /* TEHRAN */
+    تهران: { center: [35.716591878079015, 51.38105218213784], zoom: 11 },
+    ری: { center: [35.608183934558504, 51.43787509395348], zoom: 13 },
+    // شمیرانات: { center: [35.9300, 51.5500], zoom: 12 },
+    اسلامشهر: { center: [35.5466, 51.2350], zoom: 13 },
+    شهرقدس: {center: [35.71292927488953, 51.112971015985885], zoom: 12},
+    شهریار: {center: [35.6516473445175, 51.05985195439067], zoom:12},
+    ملارد: {center: [35.666972786004735, 50.97893595334336], zoom:14},
+    رباط‌کریم: {center: [35.476350, 51.091510], zoom: 13},
+    ورامین: {center: [35.323419270747564, 51.64835812010148], zoom:13},
+    /* ALBORZ */
+    کرج: {center: [35.83539496990256, 50.96039016755198], zoom:13},
+    فردیس: {center: [35.72168883896977, 50.975896225677104], zoom:13},
+    نظرآباد: {center: [35.95595724707945, 50.60956848768328], zoom:13},
+    هشتگرد: {center: [35.961471759314804, 50.67867497466834], zoom:13},
+
+    };
+
+    citySelect.addEventListener('change', function () {
+    currentCity = this.value;
+
+    if (currentCity && cityZoom[currentCity]) {
+        map.setView(
+        cityZoom[currentCity].center,
+        cityZoom[currentCity].zoom,
+        { animate: true }
+        );
+    }
+
+    filterList();
+    });
+
+
 
     provinceSelect.addEventListener('change', function () {
         const key = this.value;
@@ -462,4 +499,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // اتصال دکمه نزدیک‌ترین نمایندگی
     const nearestBtn = document.getElementById('findNearestBtn');
     if (nearestBtn) nearestBtn.addEventListener('click', findNearestAgency);
+});
+
+document.querySelector('.go-to-map-btn')?.addEventListener('click', () => {
+  document.getElementById('map').scrollIntoView({
+    behavior: 'smooth',
+    block: 'start'
+  });
 });

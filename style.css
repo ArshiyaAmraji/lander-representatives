@@ -365,9 +365,9 @@ body {
 /* نوع فعالیت در پاپ‌آپ نقشه */
 .activity-tag {
     display: inline-block;
-    color: rgb(114, 114, 114);
+    color: 475569;
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 500;
     padding: 5px 1px;
     border-radius: 20px;
     margin-top: 6px;
@@ -623,7 +623,6 @@ body {
 }
 
 .nearest-control button {
-    width: 48px;
     height: 40px;
     border-radius: 14px;
     border: none;
@@ -655,10 +654,11 @@ body {
     color: white;
     font-family: 'Vazirmatn', sans-serif;
     font-weight: 500;
-    font-size: 14px;
+    font-size: 13px;
     cursor: pointer;
     box-shadow: 0 10px 30px rgba(16,185,129,0.25);
     transition: all .25s ease;
+    height: 30px;
 }
 
 .nearest-inline-btn:hover {
@@ -695,7 +695,11 @@ body {
 .agency-item.nearest-one strong,
 .agency-item.nearest-one .agency-address,
 .agency-item.nearest-one .agency-address a {
-    color: white !important;
+    color: white !important;   
+}
+
+.agency-address {
+    font-size: 14px;
 }
 
 .distance-tag {
@@ -792,5 +796,44 @@ body {
     margin-top: 5px !important;
     
 }
+}
+
+/* ===== دسکتاپ ===== */
+.desktop-nearest {
+  display: block;
+}
+
+/* ===== موبایل (پیش‌فرض مخفی) ===== */
+.mobile-actions {
+  display: none;
+}
+
+@media (max-width: 992px) {
+  .desktop-nearest {
+    display: none;
+  }
+
+  .mobile-actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  #findNearestBtnMobile {
+    flex: 3;
+    margin-left: -6px;
+  }
+
+  .go-to-map-btn {
+    flex: 1;
+    border-radius: 16px;
+    border: none;
+    background: #1e40af;
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    height: 30px;
+    font-family: 'Vazirmatn', sans-serif;
+
+  }
 }
 

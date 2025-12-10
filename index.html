@@ -70,9 +70,23 @@
                 </select>
 
                 <input type="text" id="searchBox" placeholder="جستجوی نشانی یا نمایندگی...">
-                <button id="findNearestBtn" class="nearest-inline-btn">
-                  نزدیک‌ترین نمایندگی به من
+                
+                <!-- دسکتاپ + موبایل -->
+                <button id="findNearestBtn" class="nearest-inline-btn desktop-nearest">
+                نزدیک‌ترین نمایندگی به من
                 </button>
+
+                <!-- فقط موبایل -->
+                <div class="action-row mobile-actions">
+                <button id="findNearestBtnMobile" class="nearest-inline-btn">
+                    نزدیک‌‌‌‌ترین نمایندگی به من
+                </button>
+
+                <button class="go-to-map-btn">
+                مشاهده نقشه
+                </button>
+                </div>
+
 
                 <div id="agencyList"></div>
             </div>
