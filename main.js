@@ -184,12 +184,28 @@ document.addEventListener('DOMContentLoaded', function () {
                 ${getPhoneHtml(a.phone)}
             </div>`;
 
-        item.onclick = () => {
-            const offsetLat = isMobile ? 0.05 : 0.03;
-            const targetCenter = [a.lat + offsetLat, a.lng];
-            map.setView(targetCenter, isMobile ? 14.5 : 15, { animate: true });
-            marker.openPopup();
-        };
+    item.onclick = () => {
+        const isMobile = window.innerWidth <= 992;
+
+        // زوم و سنتر کردن نقشه روی نمایندگی
+        map.setView([a.lat + 0.008, a.lng], isMobile ? 16 : 15.5, {
+            animate: true,
+            duration: 1.2
+        });
+
+        // باز کردن پاپ‌آپ
+        marker.openPopup();
+
+        // فقط روی موبایل: اسکرول خودکار به نقشه
+        if (isMobile) {
+            setTimeout(() => {
+                document.getElementById('map').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'  // نقشه کاملاً وسط صفحه میاد
+                });
+            }, 600); // ۶۰۰ میلی‌ثانیه بعد از شروع انیمیشن نقشه
+        }
+    };
 
         // ذخیره برای فیلتر و مرتب‌سازی
         agencyMarkers.push({
@@ -499,6 +515,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // اتصال دکمه نزدیک‌ترین نمایندگی
     const nearestBtn = document.getElementById('findNearestBtn');
     if (nearestBtn) nearestBtn.addEventListener('click', findNearestAgency);
+    // ===== اتصال دکمه موبایل به تابع نزدیک‌ترین نمایندگی =====
+    const nearestBtnMobile = document.getElementById('findNearestBtnMobile');
+    if (nearestBtnMobile) {
+        nearestBtnMobile.addEventListener('click', findNearestAgency);
+}
 });
 
 document.querySelector('.go-to-map-btn')?.addEventListener('click', () => {
