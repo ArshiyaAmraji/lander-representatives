@@ -872,9 +872,9 @@ body {
   .go-to-map-btn {
     flex: 1;
     border-radius: 16px;
-    border: none;
-    background: #1e40af;
-    color: white;
+    border: solid 1px #1e40af;
+    background: #ffffff;
+    color: #1e40af;
     font-size: 10px;
     font-weight: 600;
     height: 30px;

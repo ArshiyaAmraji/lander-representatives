@@ -1,4 +1,4 @@
-// >>> متغیرهای سراسری برای دسترسی از بیرون DOMContentLoaded
+//globals
 let map;
 let agencyMarkers = [];
 let userLocation = null;
@@ -7,6 +7,8 @@ let currentProvince = '';
 let currentCity = '';
 let currentService = '';
 let markersLayer;
+let currentProvinceKey = '';
+
 
 const IRAN_BOUNDS = [[20, 38], [44, 70]];
 
@@ -18,11 +20,16 @@ function updateMapView() {
     }
 }
 
+function normalizeText(str) {
+    return str
+        .trim()
+        .replace(/\u200c/g, '') // حذف نیم‌فاصله
+        .replace(/\s+/g, ' ');
+}
+
+
 document.addEventListener('DOMContentLoaded', function () {
 
-    // --------------------------------------------------
-    // ابتدایی‌سازی نقشه
-    // --------------------------------------------------
     map = L.map('map', {
         center: [32.4279, 53.6880],
         zoom: window.innerWidth <= 992 ? 5 : 6,
@@ -34,6 +41,25 @@ document.addEventListener('DOMContentLoaded', function () {
         zoomDelta: 1,
         zoomControl: false
     });
+
+    function openPopupCentered(marker) {
+        const latLng = marker.getLatLng();
+        const isMobile = window.innerWidth <= 992;
+        const zoomLevel = isMobile ? 16 : 15.5;
+
+        map.closePopup();
+
+        map.flyTo(latLng, zoomLevel, {
+            animate: true,
+            duration: 0.9
+        });
+
+        // بعد از پایان حرکت
+        map.once('moveend', () => {
+            marker.openPopup();
+        });
+    }
+
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors',
@@ -66,17 +92,35 @@ document.addEventListener('DOMContentLoaded', function () {
     markersLayer = L.layerGroup().addTo(map);
 
     // --------------------------------------------------
-    // داده‌های نمایندگی‌ها
+    // agencys
     // --------------------------------------------------
     const agencies = [
         { city: "تهران", name: "دفتر مرکزی", lat: 35.736942070098976, lng: 51.432493071143035, addr: "تهران، خیابان سهروردی، خیابان خرمشهر، خیابان عشقیار (نیلوفر)، کوچه چهارم (حورسی)، پلاک ۱", phone: "09127146489 / 02136483529", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
         { city: "تهران", name: "دیجی سام (سامان آذرخوش)", lat: 35.68696559794489, lng: 51.42165512396892, addr: "تهران، میدان امام خمینی، اول فردوسی، پشت شهرداری، پاساژ لباف، طبقه 1", phone: "09127146489 / 02136483529", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
         { city: "تهران", name: "فروشگاه موتوتیونینگ محسن (آقای شاملو)", lat: 35.654444524066555, lng: 51.49072091700788, addr: "تهران، اتوبان بسیج، ۲۰ متری افسریه، ۱۵ متری اول، نبش کوچه کنگاوری (۲۹)", phone: "02133145521 / 02138333099", type: "ردیاب جی‌پی‌اس موتورسیکلت" },
         { city: "تهران", name: "فروشگاه رحمانی (آقای مهران رحمانی)", lat: 35.7012, lng: 51.3456, addr: "تهران، خیابان عباسی، نبش دومین کوچه سمت چپ، پلاک ۲۹۴", phone: "09128404537 / 02155418982", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
-        { city: "تهران", name: "فروشگاه جام جم (آقای فرید نظری)", lat: 35.74112645085245, lng:51.549589049711265, addr: "تهرانپارس، خیابان ۱۹۶ شرقی، پلاک ۲۲۹", phone: "09128300310 / 0217786751", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
-        { city: "تهران", name: "لندرشاپ (آقای رسولی)", lat: 35.71284445034936, lng:51.36932671244907, addr: "تهران، ستارخان، بین شادمان و بهبودی، بعد از کوچه علی نجاری، پلاک ۲۴۴، طبقه اول", phone: "09122151330 / 02166559575", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
-        { city: "تهران", name: "فروشگاه علی (آقای احسان فکری)", lat: 35.745, lng: 51.39, addr: "خیابان شریعتی بعداز مترو قیطریه بلوار صبا پلاک ۱۶۳", phone: "09123129396", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
+        { city: "تهران", name: "فروشگاه جام جم (آقای فرید نظری)", lat: 35.74112645085245, lng: 51.549589049711265, addr: "تهرانپارس، خیابان ۱۹۶ شرقی، پلاک ۲۲۹", phone: "09128300310 / 0217786751", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
+        { city: "تهران", name: "لندرشاپ (آقای رسولی)", lat: 35.71284445034936, lng: 51.36932671244907, addr: "تهران، ستارخان، بین شادمان و بهبودی، بعد از کوچه علی نجاری، پلاک ۲۴۴، طبقه اول", phone: "09122151330 / 02166559575", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
+        { city: "تهران", name: "آیبینو (محمدرضا عاشق)", lat: 35.69490268819197, lng: 51.40676256522828, addr: "تهران، خیابان جمهوری، پاساژ علاالدین ۲، طبقه همکف، واحد ۲۰", phone: "09129259105 / 02166170821", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
         { city: "تهران", name: "زنگوله (مهرداد گرجی)", lat: 35.735, lng: 51.3234, addr: "تهرانپارس، میدان شاهد، خیابان ۱۹۶ شرقی، بین خیابان ۱۳۱ و ۱۳۳، پلاک ۳۷۳", phone: "09354223037", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
+        { city: "تهران", name: "علیرضا جابری (رضا اسپرت)", lat: 35.68507926936174, lng: 51.490814939322775, addr: "تهران، پیروزی، بلوار ابوذر، بین پل اول و دوم، کوچه جواهری، ششم غربی پلاک 1010", phone: "۰۹۱۲۳۳۸۶۴۵۴", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
+        { city: "ری", name: "جواد سیستم (آقای جواد پرتوی)", lat: 35.36543079764921, lng: 51.23044967671497, addr: "تهران، حسن آباد فشافویه، بلوار امام، جنب حوزه بسیج، پلاک ۹۱۵", phone: "۰۹۱۲۸۹۸۷۵۳۳", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
+        { city: "تهران", name: "فروشگاه بهار سیستم (آقای اکبری)", lat: 35.68775732228994, lng: 51.42020201840585, addr: "تهران خیابان فردوسی جنوبی بالاتر از میدان امام خمینی پاساژ 26 طبقه همکف پلاک 11", phone: "۰۹۱۲۲۴۸۹۴۲۵ / ۰۲۱۶۶۷۶۹۳۵۲", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
+        { city: "تهران", name: "فروشگاه بهار سیستم (آقای اکبری)", lat: 35.6703036911901, lng: 51.38341069224023, addr: "تهران، خیابان قزوین، خیابان شهید ابراهیمی (عباسی)، پلاک ۳۶۹", phone: "۰۲۱۵۵۴۲۶۷۱۲ / ۰۹۱۲۱۰۵۹۷۳۱", type: "دزدگیر اماکن و منازل / ردیاب جی‌پی‌اس خودرو" },
+        { city: "تهران", name: "تعمیرگاه موتور زد (آقای امانی)", lat: 35.71967118671216, lng: 51.430824131481415, addr: "تهران، میدان هفت تیر، خیابان بهارشیراز، خیابان سلیمان خاطر، سمت چپ بلوار، پلاک ۳۴", phone: "۰۹۱۹۷۷۳۳۴۱۷", type: "دزدگیر اماکن و منازل / ردیاب جی‌پی‌اس خودرو" },
+        { city: "تهران", name: "تعمیرگاه موتور زد (آقای امانی)", lat: 35.72428530254722, lng: 51.41616941976933, addr: " تهران، خیابان مطهری، نبش میرزای شیرازی، ضلع شمال غربی، پلاک ۲۸۵", phone: "۰۹۱۹۷۷۳۳۴۱۷", type: "دزدگیر اماکن و منازل / ردیاب جی‌پی‌اس خودرو" },
+        { city: "تهران", name: "فروشگاه نگین غرب (آقای مرجانی)", lat: 35.735, lng: 51.3234, addr: "تهران، خیابان جلال آل احمد، نرسیده به اشرفی اصفهانی، خیابان شایق شمالی", phone: "۰۹۱۲۲۳۸۰۳۷۸", type: "ردیاب جی‌پی‌اس خودرو" },
+        { city: "تهران", name: "فروشگاه آپشن سیتی (آقای مصطفی پوربخش)", lat: 35.735, lng: 51.3234, addr: "سهروردی شمالی، خیابان خلیل حسینی، سمت چپ، پلاک ۷۴", phone: "۰۲۱۸۸۷۴۶۹۶۳ / ۰۹۱۲۲۸۰۳۱۱۹", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
+        { city: "تهران", name: "", lat: 35.735, lng: 51.3234, addr: "", phone: "", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
+        { city: "تهران", name: "", lat: 35.735, lng: 51.3234, addr: "", phone: "", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
+        { city: "تهران", name: "", lat: 35.735, lng: 51.3234, addr: "", phone: "", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
+        { city: "تهران", name: "", lat: 35.735, lng: 51.3234, addr: "", phone: "", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
+        { city: "تهران", name: "", lat: 35.735, lng: 51.3234, addr: "", phone: "", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
+        { city: "تهران", name: "", lat: 35.735, lng: 51.3234, addr: "", phone: "", type: "ردیاب جی‌پی‌اس خودرو / ردیاب جی‌پی‌اس موتورسیکلت" },
+
+
+
+
         { city: "کرج", name: "نمایندگی کرج", lat: 35.8321, lng: 50.9654, addr: "جهانشهر، بلوار جمهوری", phone: "026-32511223", type: "فروش و نصب" },
         { city: "مشهد", name: "نمایندگی مشهد", lat: 36.2970, lng: 59.6062, addr: "وکیل آباد، نبش وکیل آباد ۲۵", phone: "051-36081234", type: "فروش و خدمات پس از فروش" },
         { city: "اصفهان", name: "نمایندگی اصفهان", lat: 32.6539, lng: 51.6660, addr: "چهارباغ بالا، نزدیک سی و سه پل", phone: "031-36654321", type: "فروش و نصب تخصصی" },
@@ -126,12 +170,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     agencies.forEach(a => {
-        const title = a.city + (a.name ? ' — ' + a.name : '');
+        const title = a.name ? `${a.name}` : 'نمایندگی لندر';
         const gmapUrl = `https://www.google.com/maps/search/?api=1&query=${a.lat},${a.lng}`;
         const isMobile = window.innerWidth <= 992;
 
         // پاپ‌آپ روی نقشه
-    const popupHtml = `
+        const popupHtml = `
         <div class="popup-content">
             <h4>${title}</h4>
             
@@ -143,8 +187,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const popupOptions = {
             maxWidth: 340,
             minWidth: 280,
-            autoPan: true,
-            keepInView: true
+            autoPan: false,
+            closeButton: false,
         };
 
         const marker = L.marker([a.lat, a.lng], { icon: bluePin })
@@ -170,28 +214,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 ${getPhoneHtml(a.phone)}
             </div>`;
 
-    item.onclick = () => {
-        const isMobile = window.innerWidth <= 992;
+        item.onclick = () => {
+            openPopupCentered(marker, window.innerWidth <= 992 ? 140 : 110);
 
-        // زوم و سنتر کردن نقشه روی نمایندگی
-        map.setView([a.lat + 0.008, a.lng], isMobile ? 16 : 15.5, {
-            animate: true,
-            duration: 1.2
-        });
+            // فقط موبایل: اسکرول به نقشه
+            if (window.innerWidth <= 992) {
+                setTimeout(() => {
+                    document.getElementById('map').scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                }, 500);
+            }
+        };
 
-        // باز کردن پاپ‌آپ
-        marker.openPopup();
-
-        // فقط روی موبایل: اسکرول خودکار به نقشه
-        if (isMobile) {
-            setTimeout(() => {
-                document.getElementById('map').scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center'  // نقشه کاملاً وسط صفحه میاد
-                });
-            }, 600); // ۶۰۰ میلی‌ثانیه بعد از شروع انیمیشن نقشه
-        }
-    };
 
         // ذخیره برای فیلتر و مرتب‌سازی
         agencyMarkers.push({
@@ -219,21 +255,30 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     const citiesByProvince = {
-        tehran: ["تهران", "ری", "اسلامشهر", "شهرقدس", "شهریار", "ملارد", "رباط‌کریم", "ورامین"],
-        alborz: ["کرج", "فردیس", "نظرآباد", "هشتگرد"],
-        khorasan: ["مشهد"],
-        esfahan: ["اصفهان"],
-        fars: ["شیراز"],
-        azerbaijan: ["تبریز"],
-        gilan: ["رشت"],
-        qom: ["قم"]
+        tehran: [
+            { id: 'tehran', label: 'تهران' },
+            { id: 'rey', label: 'ری' },
+            { id: 'eslamshahr', label: 'اسلامشهر' },
+            { id: 'shahrqods', label: 'شهرقدس' },
+            { id: 'shahriar', label: 'شهریار' },
+            { id: 'malard', label: 'ملارد' },
+            { id: 'robatkarim', label: 'رباط کریم' },
+            { id: 'varamin', label: 'ورامین' }
+        ],
+        alborz: [
+            { id: 'karaj', label: 'کرج' },
+            { id: 'fardis', label: 'فردیس' },
+            { id: 'nazarabad', label: 'نظرآباد' },
+            { id: 'hashtgerd', label: 'هشتگرد' }
+        ]
     };
+
 
     const provinceSelect = document.getElementById('provinceSelect');
     const citySelect = document.getElementById('citySelect');
 
     const configZoom = {
-        tehran: { center: [35.7210, 51.3890], zoom: 10 },
+        tehran: { center: [35.7210, 51.3890], zoom: 9 },
         alborz: { center: [35.864412, 50.869161], zoom: 11 },
         khorasan: { center: [36.2970, 59.6062], zoom: 12 },
         esfahan: { center: [32.6539, 51.6660], zoom: 12 },
@@ -244,65 +289,100 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     const cityZoom = {
-    /* TEHRAN */
-    تهران: { center: [35.716591878079015, 51.38105218213784], zoom: 11 },
-    ری: { center: [35.608183934558504, 51.43787509395348], zoom: 13 },
-    // شمیرانات: { center: [35.9300, 51.5500], zoom: 12 },
-    اسلامشهر: { center: [35.5466, 51.2350], zoom: 13 },
-    شهرقدس: {center: [35.71292927488953, 51.112971015985885], zoom: 12},
-    شهریار: {center: [35.6516473445175, 51.05985195439067], zoom:12},
-    ملارد: {center: [35.666972786004735, 50.97893595334336], zoom:14},
-    رباط‌کریم: {center: [35.476350, 51.091510], zoom: 13},
-    ورامین: {center: [35.323419270747564, 51.64835812010148], zoom:13},
-    /* ALBORZ */
-    کرج: {center: [35.83539496990256, 50.96039016755198], zoom:13},
-    فردیس: {center: [35.72168883896977, 50.975896225677104], zoom:13},
-    نظرآباد: {center: [35.95595724707945, 50.60956848768328], zoom:13},
-    هشتگرد: {center: [35.961471759314804, 50.67867497466834], zoom:13},
+        tehran: { center: [35.698, 51.436], zoom: 11 },     // مرکز واقعی نمایندگی‌های تهران، زوم مناسب برای پوشش همه
+        rey: { center: [35.3654, 51.2304], zoom: 14 },      // تک نمایندگی ری – زوم بالاتر برای دید بهتر جزئیات
+        eslamshahr: { center: [35.5466, 51.2350], zoom: 13 },
+        shahrqods: { center: [35.7129, 51.1130], zoom: 13 },
+        shahriar: { center: [35.6598, 51.0588], zoom: 12 }, // کمی گسترده‌تر
+        malard: { center: [35.6670, 50.9789], zoom: 13 },
+        robatkarim: { center: [35.4849, 51.0826], zoom: 12 }, // مختصات دقیق‌تر
+        varamin: { center: [35.3256, 51.6470], zoom: 12 },
 
+        karaj: { center: [35.8354, 50.9604], zoom: 12 },     // کاهش از ۱۳ به ۱۲ برای پوشش بهتر کرج
+        fardis: { center: [35.7216, 50.9759], zoom: 13 },
+        nazarabad: { center: [35.9560, 50.6095], zoom: 13 },
+        hashtgerd: { center: [35.9614, 50.6786], zoom: 13 }
     };
-
-    citySelect.addEventListener('change', function () {
-    currentCity = this.value;
-
-    if (currentCity && cityZoom[currentCity]) {
-        map.setView(
-        cityZoom[currentCity].center,
-        cityZoom[currentCity].zoom,
-        { animate: true }
-        );
-    }
-
-    filterList();
-    });
-
-
 
     provinceSelect.addEventListener('change', function () {
         const key = this.value;
+
+        // همه استان‌ها
+        if (!key) {
+            currentProvinceKey = '';
+            currentProvince = '';
+            currentCity = '';
+
+            updateMapView();
+
+            citySelect.innerHTML = '<option value="">همه شهرستان‌ها</option>';
+            citySelect.style.display = 'none';
+
+            filterList();
+            return;
+        }
+
+        // استان خاص
+        currentProvinceKey = key;
         currentProvince = provinceMap[key] || '';
 
         if (configZoom[key]) {
-            map.setView(configZoom[key].center, configZoom[key].zoom, { animate: true });
+            map.setView(
+                configZoom[key].center,
+                configZoom[key].zoom,
+                { animate: true }
+            );
         }
+
+        const cities = citiesByProvince[key];
+
+        // اگر استان شهرستان ندارد
+        if (!cities || !cities.length) {
+            citySelect.style.display = 'none';
+            return;
+        }
+
+        citySelect.style.display = 'block';
+        citySelect.innerHTML = '<option value="">همه شهرستان‌ها</option>';
+
+        cities.forEach(city => {
+            const opt = document.createElement('option');
+            opt.value = city.id;        // id
+            opt.textContent = city.label; // label
+            citySelect.appendChild(opt);
+        });
 
         currentCity = '';
-        citySelect.innerHTML = '<option value="">همه شهرستان‌ها</option>';
-        citySelect.style.display = 'none';
-
-        if (key && citiesByProvince[key]) {
-            citiesByProvince[key].forEach(city => {
-                const opt = document.createElement('option');
-                opt.value = city;
-                opt.textContent = city;
-                citySelect.appendChild(opt);
-            });
-            citySelect.style.display = 'block';
-        }
-
-        document.getElementById('searchBox').value = '';
         filterList();
     });
+
+
+
+
+
+    citySelect.addEventListener('change', function () {
+        const cityId = this.value;
+        currentCity = cityId;
+
+        // همیشه زوم شهرستان را اعمال کن، حتی اگر هیچ نمایندگی نباشد
+        if (cityId && cityZoom[cityId]) {
+            map.setView(
+                cityZoom[cityId].center,
+                cityZoom[cityId].zoom,
+                { animate: true }
+            );
+        } else if (!cityId && currentProvinceKey && configZoom[currentProvinceKey]) {
+            // بازگشت به زوم استان
+            map.setView(
+                configZoom[currentProvinceKey].center,
+                configZoom[currentProvinceKey].zoom,
+                { animate: true }
+            );
+        }
+
+        filterList();  // فیلتر بعد از زوم
+    });
+
 
     // جستجو
     document.getElementById('searchBox').addEventListener('input', filterList);
@@ -367,9 +447,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const matchesSearch = fullText.includes(term);
             const matchesProvince = !currentProvince || fullText.includes(currentProvince);
-            const matchesCity = !currentCity || fullText.includes(currentCity);
+            const matchesCity = !currentCity || obj.element.textContent.includes(citiesByProvince[currentProvinceKey]?.find(c => c.id === currentCity)?.label || '');
             const matchesService = !currentService || obj.type.includes(currentService);
-
             const shouldShow = matchesSearch && matchesProvince && matchesCity && matchesService;
 
             obj.element.style.display = shouldShow ? 'block' : 'none';
@@ -380,7 +459,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        if (!hasVisible) updateMapView();
+        // if (!hasVisible) updateMapView();
     }
 
     function resetProvinceFilter() {
@@ -505,12 +584,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const nearestBtnMobile = document.getElementById('findNearestBtnMobile');
     if (nearestBtnMobile) {
         nearestBtnMobile.addEventListener('click', findNearestAgency);
-}
+    }
 });
 
 document.querySelector('.go-to-map-btn')?.addEventListener('click', () => {
-  document.getElementById('map').scrollIntoView({
-    behavior: 'smooth',
-    block: 'start'
-  });
+    document.getElementById('map').scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+    });
 });
